@@ -1,0 +1,70 @@
+{
+  "parent": "builtin/entity",
+  "textures": {
+    "particle": "dream_sakura_blue_archive:item/weapon/psionic_scepter"
+  },
+  "display": {
+    "thirdperson_lefthand": {
+      "translation": [
+        0,
+        -4,
+        0
+      ]
+    },
+    "firstperson_righthand": {
+      "translation": [
+        0,
+        -3,
+        0
+      ]
+    },
+    "firstperson_lefthand": {
+      "translation": [
+        0,
+        -3,
+        0
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        12,
+        0
+      ]
+    },
+    "gui": {
+      "rotation": [
+        90,
+        -135,
+        90
+      ],
+      "translation": [
+        -2,
+        -2,
+        0
+      ],
+      "scale": [
+        0.45,
+        0.45,
+        0.45
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        90,
+        -45,
+        90
+      ],
+      "translation": [
+        2.5,
+        -2.5,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    }
+  }
+}

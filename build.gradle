@@ -1,0 +1,308 @@
+// mixins 插件
+buildscript {
+    repositories {
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+    }
+    // repositories {
+    //     maven { url = "https://repo.spongepowered.org/maven" }
+    //     mavenCentral()
+    // }
+    // dependencies {
+    //     classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    // }
+}
+
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
+}
+
+mixin {
+    add sourceSets.main, "dream_sakura_blue_archive.refmap.json"
+    config 'mixin.dream_sakura_blue_archive.json'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+// Mojang 在 1.18+ 向终端用户提供 Java 17，因此你的 mod 应该以 Java 17 为目标。
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+
+minecraft {
+    // 映射可以随时更改，格式必须如下。
+    // 渠道:     版本:
+    // official   MCVersion             来自 Mojang 映射文件的官方字段/方法名
+    // parchment  YYYY.MM.DD-MCVersion  在官方映射基础上由社区提供的参数名和 javadoc
+    //
+    // 使用 'official' 或 'parchment' 映射时必须了解 Mojang 许可协议。
+    // 更多信息见: https://github.com/MinecraftForge/MCPConfig/blob/master/Mojang.md
+    //
+    // Parchment 是由 ParchmentMC 维护的非官方项目，与 MinecraftForge 无关
+    // 使用他们的映射需要额外设置: https://parchmentmc.org/docs/getting-started
+    //
+    // 使用非默认映射需自担风险。它们不一定总是可用。
+    // 更改映射后只需重新运行 setup 任务即可更新工作区。
+    mappings channel: mapping_channel, version: mapping_version
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // 若为 true，所有 Eclipse/IntelliJ IDEA 运行配置在启动游戏前会运行对应的 "prepareX" 任务。
+    // 大多数情况下无需启用。
+    // enableEclipsePrepareRuns = true
+    // enableIdeaPrepareRuns = true
+
+    // 允许在 IDE 输出目录上运行 Gradle 的 ProcessResources 任务。
+    // 此模板必须设置为 true 才能正常工作。
+    // 详见 https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
+    copyIdeResources = true
+
+    // 若为 true，将在生成的 IDE 运行配置中添加所有声明的运行配置的文件夹名。
+    // 文件夹名可通过 "folderName" 属性设置。
+    // 默认情况下，运行配置的文件夹名为包含它的 Gradle 项目名。
+    // generateRunFolders = true
+
+    // 启用开发环境下的访问转换器。
+    // 它们会应用到 Minecraft 构件上。
+    // 访问转换器文件可以在项目的任意位置。
+    // 但最终 mod jar 中必须位于 "META-INF/accesstransformer.cfg" 才能被 Forge 加载。
+    // 默认位置是最佳实践，可自动将文件放到最终 jar 的正确位置。
+    // 更多信息见: https://docs.minecraftforge.net/en/latest/advanced/accesstransformers/
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // 默认运行配置。
+    // 可根据需要调整、移除或复制。
+    runs {
+        // 下面所有运行配置都适用
+        configureEach {
+            workingDirectory project.file('run')
+
+            // 推荐的 userdev 环境日志标记
+            // 标记可按需添加/移除，用逗号分隔。
+            // "SCAN": mod 扫描。
+            // "REGISTRIES": 注册事件触发。
+            // "REGISTRYDUMP": 获取所有注册表内容。
+            property 'forge.logging.markers', 'REGISTRIES'
+
+            // 推荐的控制台日志级别
+            // 可在此设置不同级别。
+            // 详见: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
+            property 'forge.logging.console.level', 'debug'
+
+            // 启用 Mixin 运行时环境。
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+            jvmArg '-Dfantasy_ending.log_dir=./run/logs/uom'
+        }
+
+        client {
+            // 要加载 gametest 的命名空间列表，用逗号分隔。空 = 所有命名空间。
+            property 'forge.enabledGameTestNamespaces', mod_id
+
+            // jvmArg '-XX:+IgnoreUnrecognizedVMOptions'
+            // jvmArg '--add-opens=java.base/java.lang=ALL-UNNAMED'
+            // jvmArg '--add-opens=java.base/java.lang.invoke=ALL-UNNAMED'
+            // jvmArg '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED'
+        }
+
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui'
+        }
+
+        // 此运行配置启动 GameTestServer 并运行所有已注册的 gametest，然后退出。
+        // 默认情况下，若未提供 gametest，服务器会崩溃。
+        // gametest 系统默认对其他运行配置也启用，可通过 /test 命令使用。
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        data {
+            // 示例：覆盖上面 configureEach 设置的 workingDirectory
+            workingDirectory project.file('run-data')
+
+            // 指定数据生成的 modid、输出资源目录和现有资源目录。
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+
+
+// 包含数据生成器生成的资源。
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    // 在这里添加依赖的仓库
+    // ForgeGradle 会自动为你添加 Forge maven 和 Maven Central
+
+    // 如果你有 mod jar 依赖放在 ./libs，可以像下面这样声明仓库。
+    // 详见：https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
+    flatDir {
+        dir 'libs'
+    }
+    // 添加仓库:饰品
+    maven {
+        name = "Illusive Soulworks maven"
+        url = "https://maven.theillusivec4.top/"
+    }
+    // 添加仓库:基岩版动画
+    maven {
+        name = 'GeckoLib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+                includeGroupByRegex("software\\.bernie.*")
+                includeGroup("com.eliotlash.mclib")
+        }
+    }
+    maven {
+        url = "https://api.modrinth.com/maven"
+    }
+    // 添加仓库:KosmX(人物动画)
+    maven {
+        name "KosmX's maven"
+        url 'https://maven.kosmx.dev/'
+    }
+    // 添加仓库:CurseForge
+    maven {
+        url "https://cursemaven.com"
+    }
+}
+
+dependencies {
+    // 指定要使用的 Minecraft 版本。
+    // 只要有 "userdev" 分类构件且是兼容的 patcher 构件，任何构件都可用。
+    // ForgeGradle 会请求并设置 "userdev" 分类。
+    // 若 group id 为 "net.minecraft" 且 artifact id 为 ["client", "server", "joined"] 之一，
+    // 则会特殊处理，无需外部仓库即可设置 vanilla 依赖。
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // 仅在编译时依赖 API 构件
+    compileOnly(fg.deobf("top.theillusivec4.curios:curios-forge:5.12.0+1.20.1:api"))
+    // 运行时使用完整的 Curios API jar
+    runtimeOnly(fg.deobf("top.theillusivec4.curios:curios-forge:5.12.0+1.20.1"))
+//    // 运行时使用 Caelus API jar
+//    compileOnly(fg.deobf("top.theillusivec4.caelus:caelus-forge:${caelus_version}:api"))
+//    runtimeOnly(fg.deobf("top.theillusivec4.caelus:caelus-forge:${caelus_version}"))
+    // 运行时使用 Curios API jar
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
+//    // 运行时使用 MCLib
+    compileOnly fg.deobf("curse.maven:jade-324717:6855440")
+    runtimeOnly fg.deobf("curse.maven:jade-324717:6855440")
+    implementation("com.eliotlash.mclib:mclib:20")
+    // 运行时使用 KosmX's Player Animations
+    implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animation_version}")
+    // 运行时使用 神化前置
+//    //jei
+//    implementation fg.deobf("curse.maven:dream-sakura-1513524:7929135")
+    implementation fg.deobf("curse.maven:jei-238222:7391695")
+    runtimeOnly(fg.deobf("curse.maven:jei-238222:7391695"))
+//    //植物魔法
+//    implementation fg.deobf("curse.maven:botania-225643:6870713")
+//    runtimeOnly(fg.deobf("curse.maven:botania-225643:6870713"))
+//    //新生魔艺
+//    implementation fg.deobf("curse.maven:ars-nouveau-401955:6688854")
+//    runtimeOnly(fg.deobf("curse.maven:ars-nouveau-401955:6688854"))
+//    implementation fg.deobf("curse.maven:goety-586095:6778940")
+//    implementation fg.deobf("curse.maven:goety-revelation-1236817:6791619")
+    //帕秋莉
+    // implementation fg.deobf("curse.maven:MobBattle-268746:5300817")
+    // implementation fg.deobf("curse.maven:FarmersDelight-398521:5051242")
+    // implementation fg.deobf("curse.maven:Oculus-581495:5299671")
+    // implementation fg.deobf("curse.maven:Xenon-564239:5752040")
+    // implementation fg.deobf("curse.maven:Citadel-331936:5633260")
+    implementation fg.deobf("curse.maven:IBE-256822:4994072")
+    // implementation fg.deobf("curse.maven:Cataclysm-551586:5924796")
+    // implementation fg.deobf("curse.maven:Lionfish-1001614:5922047")
+    // implementation fg.deobf("curse.maven:SlashBladeRe-1022428:5957105")
+    // implementation fg.deobf("curse.maven:SB_JAB-310187:5957114")
+    // implementation fg.deobf("curse.maven:LodestoneLib-616457:5929869")
+    // implementation fg.deobf("curse.maven:Auroras-1105290:5909718")
+    // implementation fg.deobf("curse.maven:ClassicBar-317642:5983897")
+    // implementation fg.deobf("curse.maven:mutil-351914:4824501")
+    // implementation fg.deobf("curse.maven:Tetra-289712:5236744")
+    // implementation fg.deobf("curse.maven:IAF-264231:5633453")
+    // implementation fg.deobf("curse.maven:L2Hos-909207:5799378")
+    // implementation fg.deobf("curse.maven:L2L-620203:5775648")
+    // implementation fg.deobf("curse.maven:L2Art-659547:5797320")
+    // implementation fg.deobf("curse.maven:L2Com-758349:5564677")
+    // implementation fg.deobf("curse.maven:GuardVillagers-360203:6066968")
+    // implementation fg.deobf("curse.maven:EnigmaticLegacy-336184:5600004")
+    // implementation fg.deobf("curse.maven:EnchantmentDescriptions-250419:5855251")
+    // implementation fg.deobf("curse.maven:bookshelf-228525:5423987")
+    
+
+    implementation 'org.spongepowered:mixin:0.8.5'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    //车万
+    implementation fg.deobf("curse.maven:touhou-little-maid-355044:7510714")
+    // JEI 示例 mod 依赖 - 使用 fg.deobf() 可确保依赖被 remap 到你的开发映射
+    // JEI API 仅在编译时使用，完整 JEI 构件在运行时使用
+    // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+    // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
+    // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+
+    // 使用 ./libs 下 mod jar 的示例依赖和 flat dir 仓库
+    // 对应 ./libs/coolmod-${mc_version}-${coolmod_version}.jar
+    // 搜索时忽略 group id，此处为 "blank"
+    // implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
+    implementation fg.deobf("blank:dream_sakura:0.0.4_data")
+
+    // 更多信息：
+    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+}
+
+// 此代码块会在指定资源目标中展开所有声明的替换属性。
+// 缺失属性会导致错误。属性使用 ${} Groovy 语法展开。
+// 启用 "copyIdeResources" 时，在 IDE 环境下启动游戏前也会运行。
+// 详见 https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+// 如果是多项目构建，开发时需要未混淆的 jar，可延迟到发布时再混淆：
+// tasks.named('publish').configure {
+//     dependsOn 'reobfJar'
+// }
+
+// maven-publish 插件发布配置示例
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Java 编译使用 UTF-8 字符集
+}

@@ -1,0 +1,59 @@
+Dream Sakura Proprietary License (Minecraft Mod)
+Copyright (c) 2026 Dream Sakura Development Team
+All rights reserved.
+
+IMPORTANT NOTICE: This Mod contains a large amount of third-party created resources and content. All rights
+(including copyright and related rights) in any third-party content remain with the respective authors/rights holders.
+The Dream Sakura Development Team includes such third-party content only within the scope of permission granted by
+the respective rights holders. This license does NOT sublicense or transfer any rights to any third-party content.
+
+(1) Definitions
+- "The Mod" / "The Work" means Dream Sakura and all related contents and files, including but not limited to:
+  source code, compiled binaries (JAR), resource/assets files (textures, models, sounds, animations, language files),
+  data/config files, documentation, and any other files contained in this repository or distributed with the Mod.
+- "Resource Files" means all non-code content included in the Mod/Work, including but not limited to models, textures,
+  sounds, animations, language files, and data files, and may include third-party content.
+- "Author" means the Dream Sakura Development Team.
+- "You" means any individual or entity that obtains, downloads, copies, or otherwise accesses the Mod/Work in any manner.
+
+(2) Scope of Permission (Personal Use Only)
+The Author grants You a revocable, non-transferable, non-exclusive, limited permission to download, install, and run
+the Mod on Your personal devices for personal gameplay and evaluation only. No other rights are granted unless
+expressly permitted by this license.
+
+(3) No Redistribution, Re-Upload, or Modpack Inclusion
+Without the Author’s prior written permission, You must NOT, by any means (including but not limited to any website,
+file host, forum, social platform, launcher, mirror site, or code hosting platform):
+- redistribute, re-upload, mirror, rehost, forward, share, or provide downloads of the Mod/Work (including source code
+  or binaries/JAR) or any portion of it;
+- include the Mod or any part of it in any modpack, launcher pack, compilation, bundle, or redistributed collection;
+- publish any modified version, repackaged version, or derivative distribution of the Mod.
+
+(4) Universal No-Asset-Theft Rule for Resource Files (Including Third-Party Content)
+Whether a Resource File is created by the Author or by third parties, unless You have separate written permission from
+the applicable rights holder, You must NOT do any of the following with any Resource Files:
+- extract, copy, modify, adapt, remix, recreate, export (including through unpacking/decompiling), reuse, or use them
+  in any other project/mod/client/server plugin/resource pack/commercial product;
+- redistribute, re-upload, publish, or provide downloads of Resource Files in any form (including releasing them as a
+  separate package, as an asset pack, or bundled inside any other work);
+- claim or imply ownership of any such Resource Files, or present them as Your original work.
+
+For avoidance of doubt: The restrictions in this Section apply to both the Author’s original assets and any third-party
+content. With respect to third-party content, this license does NOT grant any additional rights and does NOT constitute
+a sublicense; if You wish to use any third-party content, You must obtain permission directly from the respective
+rights holder.
+
+(5) Attribution and Integrity
+You must NOT remove, alter, conceal, or obscure any copyright notices, author credits, license text, attribution
+information, or other rights markings in the Mod/Work.
+
+(6) Termination
+If You violate any term of this license, the permission granted to You under this license terminates automatically.
+Upon termination, You must immediately stop all use and delete all copies of the Mod/Work in Your possession or
+control (to the extent permitted by applicable law).
+
+(7) Disclaimer
+THE MOD IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. TO THE EXTENT PERMITTED
+BY APPLICABLE LAW, THE AUTHOR SHALL NOT BE LIABLE FOR ANY DIRECT OR INDIRECT DAMAGES OR LOSSES ARISING FROM, OUT OF,
+OR IN CONNECTION WITH THE MOD OR THE USE OR INABILITY TO USE THE MOD.

@@ -1,0 +1,29 @@
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+
+
+# other
+eclipse
+run
+.vscode
+.git
+# Files from Forge MDK
+forge*changelog.txt
+
+# 项目排除路径
+/.gradle/

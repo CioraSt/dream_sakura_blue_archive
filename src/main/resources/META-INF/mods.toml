@@ -4,7 +4,7 @@ license="All rights reserved"  # 许可证,必填
 
 [[mods]]  # mod信息,必填
 modId = "dream_sakura_blue_archive"  # modid,必填
-version = "0.0.1"  # mod版本,必填
+version = "0.0.2_data"  # mod版本,必填
 displayName = "Dream Sakura Blue Archive"  # mod显示名称,必填
 logoFile = "xiaoarin.png"  # mod图标,选填
 authors="XiaoArin"  # mod作者,选填
@@ -14,7 +14,7 @@ description = '''bbkb，所以又是为了王女吗？我也要玩我的世界�
 [[dependencies.dream_sakura_blue_archive]]
 modId = "dream_sakura"
 mandatory = true
-versionRange = "[0.0.4_data,)"
+versionRange = "[0.0.6_fix,)"
 ordering = "NONE"
 side = "BOTH"
 

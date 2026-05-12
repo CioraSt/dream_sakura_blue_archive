@@ -258,7 +258,8 @@ dependencies {
     // 对应 ./libs/coolmod-${mc_version}-${coolmod_version}.jar
     // 搜索时忽略 group id，此处为 "blank"
     // implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
-    implementation fg.deobf("blank:dream_sakura:0.0.4_data")
+    implementation fg.deobf("blank:dream_sakura:0.0.6_fix")
+    implementation fg.deobf("curse.maven:epic-core-api-977556:7859475")
 
     // 更多信息：
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html

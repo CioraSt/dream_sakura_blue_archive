@@ -38,6 +38,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowIntensity(1f)
                     .withGlowColor(PINK_GLOW)
+                    .withGlowColor(PINK_GLOW)
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 2.5F, 3000.0F, 0xD01A1A2E, 0xD0CC0033, 0xFFFF6699, 0xFFFF0033,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/serlka.png"},

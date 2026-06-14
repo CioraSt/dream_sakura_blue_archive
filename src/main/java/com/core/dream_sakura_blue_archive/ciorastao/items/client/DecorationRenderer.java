@@ -4,7 +4,6 @@ import com.core.dream_sakura_blue_archive.ciorastao.dream_sakura_blue_archive;
 import com.core.dream_sakura_blue_archive.ciorastao.items.DecorationItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -52,30 +51,12 @@ public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
             return;
         }
 
-        // 设置当前渲染上下文，供 DecorationModel 使用
-        DecorationModel.setCurrentContext(transformType);
-
         // 保存当前状态
         poseStack.pushPose();
 
         // 使用try-finally块确保poseStack状态正确恢复
         try {
-            // GUI显示逻辑
-            if (transformType == ItemDisplayContext.GUI) {
-                // 检查是否存在专用的 GUI 纹理
-                String guiTexturePath = "textures/item/gui/" + item.getItemId() + "_gui.png";
-                ResourceLocation guiTextureLoc = ResourceLocation.fromNamespaceAndPath(dream_sakura_blue_archive.MODID, guiTexturePath);
-
-                boolean hasGuiTexture = Minecraft.getInstance().getResourceManager().getResource(guiTextureLoc).isPresent();
-
-                if (hasGuiTexture) {
-                    // 如果有专用 GUI 纹理，应用缩放和偏移
-                    poseStack.scale(0.75f, 0.75f, 0.75f);
-                    poseStack.translate(0.16f, 0.0f, 0.125f);
-                }
-                // 无论是否有专用纹理，都调用 super 进行渲染（Model层会根据上下文返回对应纹理路径）
-                super.renderByItem(stack, transformType, poseStack, bufferSource, packedLight, packedOverlay);
-            } else if (item.getGlowColor().length != 0) {
+            if (item.getGlowColor().length != 0) {
                 // 根据显示上下文决定渲染顺序：第一人称时先渲染发光层，其他情况后渲染
                 if (transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || transformType == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) {
                     // 第一人称视角：先渲染发光层

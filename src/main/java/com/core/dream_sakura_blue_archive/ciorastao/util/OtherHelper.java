@@ -42,6 +42,47 @@ public class OtherHelper {
         return molecule / denominator + yOffset;
     }
 
+    /**
+     * 将光环等级(1~100)映射到TXT设定的10档被动技能等级(1~10)
+     * 映射规则：1-10→1, 11-20→2, ..., 91-100→10
+     */
+    public static int getPassiveSkillLevel(int haloLevel) {
+        int skillLevel = (haloLevel - 1) / 10 + 1;
+        return Math.min(skillLevel, 10);
+    }
+
+    /**
+     * 从10档数值数组中获取当前光环等级对应的值
+     * @param haloLevel 光环等级(1~100)
+     * @param values 10档数值数组(索引0=1级, 9=MAX)
+     */
+    public static float getPassiveValue(int haloLevel, float[] values) {
+        int skillLevel = getPassiveSkillLevel(haloLevel);
+        return values[skillLevel - 1];
+    }
+
+    /**
+     * 将光环等级(1~100)映射到TXT设定的5档主动技能等级(1~5/MAX)
+     * 映射规则：1-15→1, 16-30→2, 31-45→3, 46-60→4, 61+→MAX
+     */
+    public static int getActiveSkillLevel(int haloLevel) {
+        if (haloLevel >= 61) return 5;
+        if (haloLevel >= 46) return 4;
+        if (haloLevel >= 31) return 3;
+        if (haloLevel >= 16) return 2;
+        return 1;
+    }
+
+    /**
+     * 从5档数值数组中获取当前光环等级对应的值
+     * @param haloLevel 光环等级(1~100)
+     * @param values 5档数值数组(索引0=1级, 4=MAX)
+     */
+    public static float getActiveValue(int haloLevel, float[] values) {
+        int skillLevel = getActiveSkillLevel(haloLevel);
+        return values[skillLevel - 1];
+    }
+
     // 添加修饰符
     public static void addModifier(
             ListTag modifiersList,

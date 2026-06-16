@@ -3,42 +3,46 @@ package com.core.dream_sakura_blue_archive.ciorastao.events;
 import com.core.dream_sakura.enums.DamageType;
 import com.core.dream_sakura_blue_archive.ciorastao.dream_sakura_blue_archive;
 import com.core.dream_sakura_blue_archive.ciorastao.effect.RegistryEffect;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloLevelManager;
 import com.core.dream_sakura_blue_archive.ciorastao.util.OtherHelper;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 伤害处理器 —— 处理三个角色的主动/被动技能伤害、护盾和穿透逻辑
+ */
 @Mod.EventBusSubscriber(modid = dream_sakura_blue_archive.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class DamageHandler {
 
-    // 爱丽丝光环主动技能伤害逻辑
-    public static void executeActiveSkill(Player player, float multiplier) {
-        // 1. 获取玩家基础攻击力并计算最终伤害
-        // 此时的 multiplier 已经是【等级倍率 * 充能加成】后的结果了
-        double attackDamage = player.getAttributeValue(Attributes.ATTACK_DAMAGE);
-        float finalDamage = (float) (attackDamage * multiplier);
+    private static final String HOSHINO_ID = "dream_sakura_blue_archive:hoshino_halo";
+    private static final String HINA_ID    = "dream_sakura_blue_archive:hina_halo";
+    private static final String ALICE_ID   = "dream_sakura_blue_archive:tendouaris_halo";
 
-        // 2. 执行直线扫描逻辑
+    // ============================================================
+    // 爱丽丝 (TENDOUARIS) - 主动技能：平衡崩坏（直线扫描）
+    // ============================================================
+
+    public static void executeActiveSkill(Player player, float multiplier) {
+        double attackDamage = player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        float finalDamage = (float)(attackDamage * multiplier);
+
         double range = 32.0D;
         Vec3 start = player.getEyePosition();
         Vec3 look = player.getLookAngle();
@@ -50,320 +54,337 @@ public class DamageHandler {
 
         for (LivingEntity target : targets) {
             if (target.getBoundingBox().inflate(0.5D).clip(start, end).isPresent()) {
-                // 造成伤害
-                target.hurt(player.damageSources().indirectMagic(player, player), finalDamage);
-
+                // 50%魔法穿透
+                applyMagicPenetration(player, target, finalDamage, 0.5f);
                 if (player.level() instanceof ServerLevel serverLevel) {
-                    serverLevel.sendParticles(ParticleTypes.FLASH, target.getX(), target.getY() + 1, target.getZ(), 1, 0, 0, 0, 0);
+                    serverLevel.sendParticles(ParticleTypes.FLASH,
+                        target.getX(), target.getY() + 1, target.getZ(), 1, 0, 0, 0, 0);
                 }
             }
         }
 
-        // 3. 视觉效果
         if (player.level() instanceof ServerLevel serverLevel) {
             for (int i = 0; i < range; i += 2) {
                 Vec3 point = start.add(look.scale(i));
-                serverLevel.sendParticles(ParticleTypes.SONIC_BOOM, point.x, point.y, point.z, 1, 0, 0, 0, 0);
+                serverLevel.sendParticles(ParticleTypes.SONIC_BOOM,
+                    point.x, point.y, point.z, 1, 0, 0, 0, 0);
             }
         }
     }
 
+    // ============================================================
+    // 日奈 (HINA) - 主动技能：终幕（扇形单次伤害，由 RegistryActiveSkill 调用）
+    // ============================================================
 
+    public static void applyHinaSkillDamage(Player player, LivingEntity target, float damage) {
+        applyPhysicalPenetration(player, target, damage, 0.5f);
+    }
 
-    // 星野光环主动技能伤害逻辑
+    // ============================================================
+    // 星野 (HOSHINO) - 主动技能多段攻击（ServerTick 驱动）
+    // ============================================================
+
     @SubscribeEvent
-    public static void HoshinoHaloAHurt(LivingHurtEvent event) {
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
 
-        DamageSource damageSource = event.getSource();
-        // 检查伤害源是否为玩家
-        if (!(damageSource.getEntity() instanceof Player player)) return;
-
-        boolean isWearingHalo = OtherHelper.getCuriosItem(player, "halo", "dream_sakura_blue_archive:hoshino_halo");
-        if (!isWearingHalo) return;
-
-        // 获取玩家的持久化数据
-        CompoundTag playerData = player.getPersistentData();
-        if (!playerData.contains("SkillData")) return;
-        // 获取技能数据
-        CompoundTag skillData = playerData.getCompound("SkillData");
-        if (!skillData.contains("HoshinoHaloData")) return;
-
-
-        CompoundTag HoshinoHaloData = skillData.getCompound("HoshinoHaloData");
-        int extraDamage = HoshinoHaloData.getInt("ExtraDamage");
-        if (extraDamage > 0) {
-            event.setAmount(event.getAmount() * (1 + extraDamage));
-            HoshinoHaloData.putInt("ExtraDamage", extraDamage - 1);
+        for (var serverLevel : event.getServer().getAllLevels()) {
+            for (var player : serverLevel.players()) {
+                processHoshinoTactical(player);
+            }
         }
     }
 
-    // 星野光环主动技能护盾逻辑
-    @SubscribeEvent
-    public static void HoshinoShieldAHurt(LivingDamageEvent event) {
+    private static void processHoshinoTactical(Player player) {
+        if (!OtherHelper.getCuriosItem(player, "halo", HOSHINO_ID)) return;
 
-        if (!(event.getEntity() instanceof Player player)) return;
-
-        boolean isWearingHalo = OtherHelper.getCuriosItem(player, "halo", "dream_sakura_blue_archive:hoshino_halo");
-        if (!isWearingHalo) return;
-
-        // 获取玩家的持久化数据
         CompoundTag playerData = player.getPersistentData();
         if (!playerData.contains("SkillData")) return;
-        // 获取技能数据
         CompoundTag skillData = playerData.getCompound("SkillData");
         if (!skillData.contains("HoshinoHaloData")) return;
+        CompoundTag tacTag = skillData.getCompound("HoshinoHaloData");
+        if (!tacTag.getBoolean("Active")) return;
 
+        int hitsRemaining = tacTag.getInt("HitsRemaining");
+        if (hitsRemaining <= 0) {
+            tacTag.putBoolean("Active", false);
+            return;
+        }
 
-        CompoundTag HoshinoHaloData = skillData.getCompound("HoshinoHaloData");
+        long currentTick = player.level().getGameTime();
+        long nextHit = tacTag.getLong("NextHitTick");
+        if (currentTick < nextHit) return;
 
-        float shieldAmount = HoshinoHaloData.getFloat("ExtraShieldMultiplier") - event.getAmount();
+        float damageMultiplier = tacTag.getFloat("DamageMultiplier");
+        float stunDuration = tacTag.getFloat("StunDuration");
+        double attackDamage = player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        float finalDamage = (float)(attackDamage * damageMultiplier);
 
-        if (HoshinoHaloData.getBoolean("ExtraDamageIsTrue")) {
-            if (shieldAmount >= 0) {
-                event.setAmount(0);
-                HoshinoHaloData.putFloat("ExtraShieldMultiplier", shieldAmount);
+        // 5×5 范围扫描
+        AABB area = player.getBoundingBox().inflate(2.5, 0, 2.5)
+            .move(player.getLookAngle().scale(2));
+        var targets = player.level().getEntitiesOfClass(LivingEntity.class, area,
+            e -> e != player && e.isAlive() && !e.isAlliedTo(player));
+
+        for (var target : targets) {
+            // 无视无敌帧
+            float newHealth = target.getHealth() - finalDamage;
+            if (newHealth <= 0) {
+                target.die(player.damageSources().indirectMagic(player, player));
             } else {
-                event.setAmount(-shieldAmount);
-                HoshinoHaloData.putFloat("ExtraShieldMultiplier", 0);
+                target.setHealth(Math.max(newHealth, 0));
             }
+            // 眩晕
+            if (stunDuration > 0 && RegistryEffect.STUN_EFFECT != null) {
+                target.addEffect(new MobEffectInstance(
+                    RegistryEffect.STUN_EFFECT.get(),
+                    (int)(stunDuration * 20),
+                    0, false, true, true
+                ));
+            }
+            // 粒子
+            if (player.level() instanceof ServerLevel sl) {
+                sl.sendParticles(ParticleTypes.EXPLOSION,
+                    target.getX(), target.getY() + 1, target.getZ(), 1, 0, 0, 0, 0);
+            }
+        }
+
+        // 下一击 0.3s 后
+        tacTag.putLong("NextHitTick", currentTick + 6);
+        tacTag.putInt("HitsRemaining", hitsRemaining - 1);
+    }
+
+    // ============================================================
+    // LivingHurtEvent - 伤害修改（日奈被动1/3, 三种穿透）
+    // ============================================================
+
+    /**
+     * TXT 日奈被动1 10档: 20/60/120/180/260/400/500/561/720/888%
+     */
+    private static final float[] HINA_P1_DAMAGE_BONUS = {
+        0.20f, 0.60f, 1.20f, 1.80f, 2.60f, 4.00f, 5.00f, 5.61f, 7.20f, 8.88f
+    };
+    /**
+     * TXT 日奈被动3 10档: 8/16/24/32/40/50/75/90/120/150%
+     */
+    private static final float[] HINA_P3_UNARMORED_BONUS = {
+        0.08f, 0.16f, 0.24f, 0.32f, 0.40f, 0.50f, 0.75f, 0.90f, 1.20f, 1.50f
+    };
+
+    @SubscribeEvent
+    public static void onLivingHurt(LivingHurtEvent event) {
+        LivingEntity target = event.getEntity();
+        DamageSource source = event.getSource();
+
+        if (!(source.getEntity() instanceof Player player)) return;
+
+        // ---- 日奈被动2：爆炸免疫 ----
+        if (target instanceof Player) {
+            handleHinaExplosionImmunity((Player) target, source, event);
+        }
+
+        // ---- 按光环分类处理 ----
+        boolean hasHoshino = OtherHelper.getCuriosItem(player, "halo", HOSHINO_ID);
+        boolean hasHina    = OtherHelper.getCuriosItem(player, "halo", HINA_ID);
+        boolean hasAlice   = OtherHelper.getCuriosItem(player, "halo", ALICE_ID);
+
+        if (hasHina) {
+            handleHinaPassive1(player, event);
+            handleHinaPassive3(player, target, event);
+        }
+
+        // 穿透处理
+        if (hasAlice) {
+            applyPenetrationInEvent(player, target, event, 0.5f, "magic");
+        }
+        if (hasHina) {
+            applyPenetrationInEvent(player, target, event, 0.5f, "physical");
+        }
+        if (hasHoshino) {
+            applyPenetrationInEvent(player, target, event, 0.5f, "explosion");
         }
     }
 
-    //#region 日奈光环技能逻辑
-    // 攻击检测
-    @SubscribeEvent
-    public static void HinaHaloHurt(LivingHurtEvent event) {
-        DamageSource damageSource = event.getSource();
-
-        if (!(damageSource.getEntity() instanceof Player player)) return;
-
-        boolean isWearingHalo = OtherHelper.getCuriosItem(player, "halo", "dream_sakura_blue_archive:hina_halo");
-        if (!isWearingHalo) return;
-
-        // 获取数据
+    // ---- 日奈被动2：爆炸免疫 ----
+    private static void handleHinaExplosionImmunity(Player player, DamageSource source, LivingHurtEvent event) {
+        if (!OtherHelper.getCuriosItem(player, "halo", HINA_ID)) return;
         CompoundTag playerData = player.getPersistentData();
         if (!playerData.contains("SkillData")) return;
         CompoundTag skillData = playerData.getCompound("SkillData");
         if (!skillData.contains("HinaHaloData")) return;
-        CompoundTag HinaHaloData = skillData.getCompound("HinaHaloData");
-
-        // 检查是否开启技能
-        if (!HinaHaloData.getBoolean("ExtraDamageIsTrue")) return;
-
-        // 检查是否已经完成
-        if (HinaHaloData.getBoolean("SkillCompleted")) return;
-
-
-        // #region 主动技能逻辑
-        // 伤害计算
-        int damageCount = HinaHaloData.getInt("DamageCount");
-        float originalDamage = event.getAmount();
-        float finalDamage = 0;
-
-        switch (damageCount) {
-            case 0:
-            case 1:
-                float multiplier1 = HinaHaloData.getFloat("ExtraDamageMultiplier1");
-                finalDamage = originalDamage * multiplier1;
-                break;
-            case 2:
-                float multiplier2 = HinaHaloData.getFloat("ExtraDamageMultiplier2");
-                finalDamage = originalDamage * multiplier2;
-                break;
-            default:
-                finalDamage = originalDamage;
-                break;
-        }
-
-        // 真伤(设置生命值)
-        LivingEntity target = event.getEntity();
-        float newHealth = target.getHealth() - finalDamage;
-        if (newHealth <= 0) {
-            target.die(damageSource);
-        } else {
-            target.setHealth(newHealth);
-            event.setAmount(0);
+        CompoundTag hinaData = skillData.getCompound("HinaHaloData");
+        // 爆炸免疫 (被动2的额外效果)
+        if (hinaData.getBoolean("Passive2ExplosionImmune") &&
+            DamageType.EXPLOSION.shouldImmune(source)) {
             event.setCanceled(true);
         }
-        HinaHaloData.putInt("DamageCount", damageCount + 1);
+    }
 
-        if (damageCount >= 2) {
-            HinaHaloData.putBoolean("ExtraDamageIsTrue", false);
-            HinaHaloData.putBoolean("SkillCompleted", true);
-        }
-        //#endregion
-
-        //#region 被动1技能逻辑
-        // 记录最后攻击实体和时间
+    // ---- 日奈被动1：重装与毁灭 ----
+    private static void handleHinaPassive1(Player player, LivingHurtEvent event) {
+        DamageSource source = event.getSource();
         LivingEntity attackedEntity = event.getEntity();
-        if (attackedEntity != null) {
-            HinaHaloData.putString("LastAttackedEntity", attackedEntity.getStringUUID());
-            HinaHaloData.putLong("LastAttackTime", player.level().getGameTime());
-            HinaHaloData.putDouble("LastDamageAmount", originalDamage);
+        if (attackedEntity == null) return;
 
-            // 范围伤害
-            triggerAreaDamage(player, attackedEntity, originalDamage, HinaHaloData);
-
-        }
-        //#endregion
-
-        // 被动3检测
-        if (!HinaHaloData.contains("Passive3Active") && OtherHelper.getCuriosItem(player, "halo", "dream_sakura_blue_archive:hina_halo")) {
-            HinaHaloData.putBoolean("Passive3Active", true);
-        } else {
-            HinaHaloData.putBoolean("Passive3Active", false);
-        }
-    }
-
-    private static void triggerAreaDamage(Player player, LivingEntity attackedEntity, float originalDamage, CompoundTag HinaHaloData) {
-        CompoundTag itemData = OtherHelper.getCurio(player, "halo", 0).getOrCreateTag();
-        int level = itemData.getInt("level");
-
-        float areaDamageMultiplier = OtherHelper.calculate(2.32f, 4.41f, 95, level);
-
-        // 获取实体周围实体(半径8)
-        List<LivingEntity> nearbyEntities = player.level().getEntitiesOfClass(
-                LivingEntity.class,
-                attackedEntity.getBoundingBox().inflate(8),
-                entity -> {
-                    // 确保entity不为null，并且不是玩家自己
-                    return entity != null && !entity.equals(player);
-                }
-        );
-
-
-        Random random = new Random();
-        List<LivingEntity> selectedTargets = new ArrayList<>();
-
-        if (nearbyEntities.size() <= 5) {
-            selectedTargets.addAll(nearbyEntities);
-        } else {
-            List<LivingEntity> shuffled = new ArrayList<>(nearbyEntities);
-            Collections.shuffle(shuffled, random);
-            selectedTargets = shuffled.subList(0, 5);
-        }
-
-        // 应用范围伤害
-        for (LivingEntity target : selectedTargets) {
-            if (!target.isAlive()) continue;
-
-            float finalDamage = originalDamage * areaDamageMultiplier;
-            int stunDuration = 20 + random.nextInt(80);
-
-            float newHealth = target.getHealth() - finalDamage;
-            target.setHealth(newHealth);
-
-            if (RegistryEffect.STUN_EFFECT != null) {
-                MobEffectInstance stunEffect = new MobEffectInstance(
-                        RegistryEffect.STUN_EFFECT.get(),
-                        stunDuration,
-                        0,
-                        true,
-                        true,
-                        true
-                );
-                target.addEffect(stunEffect);
-            }
-        }
-    }
-
-    // 受击检测
-    @SubscribeEvent
-    public static void HinaHaloPassive(LivingHurtEvent event) {
-        LivingEntity entity = event.getEntity();
-        if (!(entity instanceof Player player)) return;
-
-        boolean isWearingHalo = OtherHelper.getCuriosItem(player, "halo", "dream_sakura_blue_archive:hina_halo");
-        if (!isWearingHalo) return;
-
-        // 获取数据
         CompoundTag playerData = player.getPersistentData();
         if (!playerData.contains("SkillData")) return;
         CompoundTag skillData = playerData.getCompound("SkillData");
         if (!skillData.contains("HinaHaloData")) return;
-        CompoundTag HinaHaloData = skillData.getCompound("HinaHaloData");
+        CompoundTag hinaData = skillData.getCompound("HinaHaloData");
 
-        // 被动2检测
-        if (HinaHaloData.getBoolean("Passive2Active") && OtherHelper.getCuriosItem(player, "halo", "dream_sakura_blue_archive:hina_halo")) {
-            DamageSource source = event.getSource();
-            if (DamageType.EXPLOSION.shouldImmune(source)) event.setCanceled(true);
-        }
-        ;
+        String lastTarget = hinaData.getString("LastAttackedEntity");
+        long lastAttackTime = hinaData.getLong("LastAttackTime");
+        long currentTime = player.level().getGameTime();
+        String currentTarget = attackedEntity.getStringUUID();
 
-        // 被动3检测
-        if (!HinaHaloData.contains("Passive3Active") && OtherHelper.getCuriosItem(player, "halo", "dream_sakura_blue_archive:hina_halo")) {
-            HinaHaloData.putBoolean("Passive3Active", true);
+        // 同一目标连续攻击（3秒内）
+        if (currentTarget.equals(lastTarget) && currentTime - lastAttackTime < 60) {
+            int comboCount = hinaData.getInt("ComboCount") + 1;
+            hinaData.putInt("ComboCount", comboCount);
+            // 连续3次后激活加成
+            if (comboCount >= 3) {
+                hinaData.putBoolean("Passive1Active", true);
+                hinaData.putLong("Passive1StartTime", currentTime);
+                ItemStack stack = OtherHelper.getCurio(player, "halo", 0);
+                int haloLevel = HaloLevelManager.getHaloLevel(stack);
+                float bonus = OtherHelper.getPassiveValue(haloLevel, HINA_P1_DAMAGE_BONUS);
+                hinaData.putFloat("Passive1DamageBonus", bonus);
+                event.setAmount(event.getAmount() * (1 + bonus));
+            }
         } else {
-            HinaHaloData.putBoolean("Passive3Active", false);
+            hinaData.putInt("ComboCount", 1);
         }
-    }
 
-
-
-    /**
-     * 强制添加效果（无视抗性）
-     * 尝试多种可能的混淆字段名
-     */
-    private static void forceAddEffect(LivingEntity entity, MobEffectInstance instance) {
-        // 尝试的字段名列表（根据Minecraft版本变化）
-        String[] fieldNames = {"f_20945_", "activeEffects", "effects"};
-
-        for (String fieldName : fieldNames) {
-            try {
-                Field effectsField = LivingEntity.class.getDeclaredField(fieldName);
-                effectsField.setAccessible(true);
-
-                @SuppressWarnings("unchecked")
-                Map<MobEffect, MobEffectInstance> effects = (Map<MobEffect, MobEffectInstance>) effectsField.get(entity);
-                effects.put(instance.getEffect(), instance);
-                return; // 成功则返回
-            } catch (Exception ex) {
-                // 继续尝试下一个字段名
-                continue;
+        // 持续20秒，继续攻击刷新
+        if (hinaData.getBoolean("Passive1Active")) {
+            long startTime = hinaData.getLong("Passive1StartTime");
+            if (currentTime - startTime < 400) { // 20s
+                float bonus = hinaData.getFloat("Passive1DamageBonus");
+                event.setAmount(event.getAmount() * (1 + bonus));
+                hinaData.putLong("Passive1StartTime", currentTime); // 刷新
+            } else {
+                hinaData.putBoolean("Passive1Active", false);
             }
         }
 
-        // 所有字段名都失败，回退到正常方式
-        entity.addEffect(instance);
+        hinaData.putString("LastAttackedEntity", currentTarget);
+        hinaData.putLong("LastAttackTime", currentTime);
     }
 
-    /**
-     * 应用所有负面buff（强制添加，无视抗性）
-     */
-    private static void applyAllNegativeEffects(LivingEntity entity, int level, int duration) {
-        // 从注册表获取所有效果
-        for (MobEffect effect : ForgeRegistries.MOB_EFFECTS.getValues()) {
-            // 只添加负面效果
-            if (effect.getCategory() == MobEffectCategory.HARMFUL) {
-                // 创建效果实例
-                MobEffectInstance effectInstance = new MobEffectInstance(
-                        effect,
-                        duration, // 持续时间（刻）
-                        level - 1, // 等级（0-based）
-                        false, // 是否环境粒子
-                        false, // 是否显示粒子
-                        true // 是否显示图标
-                );
+    // ---- 日奈被动3：彻头彻尾 ----
+    private static void handleHinaPassive3(Player player, LivingEntity target, LivingHurtEvent event) {
+        // 检测目标无护甲
+        double targetArmor = target.getAttributeValue(Attributes.ARMOR);
+        if (targetArmor > 0) return;
 
-                // 强制添加效果（使用用户提供的代码）
-                forceAddEffect(entity, effectInstance);
+        ItemStack stack = OtherHelper.getCurio(player, "halo", 0);
+        int haloLevel = HaloLevelManager.getHaloLevel(stack);
+        float bonus = OtherHelper.getPassiveValue(haloLevel, HINA_P3_UNARMORED_BONUS);
+        event.setAmount(event.getAmount() * (1 + bonus));
+    }
+
+    // ---- 通用穿透处理 ----
+    private static void applyPenetrationInEvent(Player player, LivingEntity target,
+                                                 LivingHurtEvent event, float penPct, String type) {
+        // 穿透：绕过护甲和免疫
+        // 简单实现：增加穿透倍率伤害
+        // 实际游戏中可通过多种方式实现，此处作为预留扩展点
+        // 穿透效果结合在具体伤害方法中
+    }
+
+    // ---- 直接伤害方法（带穿透）----
+    private static void applyMagicPenetration(Player player, LivingEntity target,
+                                               float damage, float penPct) {
+        // 魔法伤害 + 50%穿透 → 直接伤害绕过50%魔抗
+        float newHealth = target.getHealth();
+        // 检查目标是否有魔法免疫
+        // 简单穿透实现：50%伤害为真实伤害
+        float trueDmg = damage * penPct;
+        float normalDmg = damage * (1 - penPct);
+        if (normalDmg > 0) {
+            target.hurt(player.damageSources().indirectMagic(player, player), normalDmg);
+        }
+        if (trueDmg > 0 && target.isAlive()) {
+            newHealth = target.getHealth() - trueDmg;
+            if (newHealth <= 0) {
+                target.die(player.damageSources().magic());
+            } else {
+                target.setHealth(newHealth);
             }
         }
     }
 
-
-    /**
-     * 存储生物被evilPearl攻击的数据
-     */
-    private static class EvilPearlData {
-        int hitCount = 0; // 被攻击次数
-        long lastHitTime = System.currentTimeMillis(); // 上次被攻击时间
-
-        // 可以添加清理机制，比如一段时间后重置计数
-        public boolean shouldReset() {
-            return System.currentTimeMillis() - lastHitTime > 30 * 1000; // 30秒后重置
+    private static void applyPhysicalPenetration(Player player, LivingEntity target,
+                                                  float damage, float penPct) {
+        float trueDmg = damage * penPct;
+        float normalDmg = damage * (1 - penPct);
+        if (normalDmg > 0) {
+            target.hurt(player.damageSources().mobAttack(player), normalDmg);
+        }
+        if (trueDmg > 0 && target.isAlive()) {
+            float newHealth = target.getHealth() - trueDmg;
+            if (newHealth <= 0) {
+                target.die(player.damageSources().generic());
+            } else {
+                target.setHealth(newHealth);
+            }
         }
     }
-    //#endregion
 
+    // ============================================================
+    // LivingDamageEvent - 护盾吸收（星野被动3）
+    // ============================================================
+
+    @SubscribeEvent
+    public static void onLivingDamage(LivingDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+
+        boolean isWearingHoshino = OtherHelper.getCuriosItem(player, "halo", HOSHINO_ID);
+        boolean isWearingHina    = OtherHelper.getCuriosItem(player, "halo", HINA_ID);
+
+        if (isWearingHoshino) {
+            handleHoshinoShield(player, event);
+        }
+        if (isWearingHina) {
+            handleHinaHitCancel(player, event);
+        }
+    }
+
+    // ---- 星野被动3：护盾吸收 ----
+    private static void handleHoshinoShield(Player player, LivingDamageEvent event) {
+        CompoundTag playerData = player.getPersistentData();
+        if (!playerData.contains("SkillData")) return;
+        CompoundTag skillData = playerData.getCompound("SkillData");
+        if (!skillData.contains("HoshinoHaloData")) return;
+        CompoundTag tacTag = skillData.getCompound("HoshinoHaloData");
+
+        long shieldEndTime = tacTag.getLong("ShieldEndTime");
+        if (player.level().getGameTime() > shieldEndTime) return;
+
+        float shieldAmount = tacTag.getFloat("ShieldAmount");
+        float damage = event.getAmount();
+
+        if (shieldAmount >= damage) {
+            tacTag.putFloat("ShieldAmount", shieldAmount - damage);
+            event.setAmount(0);
+        } else {
+            tacTag.putFloat("ShieldAmount", 0);
+            event.setAmount(damage - shieldAmount);
+        }
+    }
+
+    // ---- 日奈被动1：受击取消加成 ----
+    private static void handleHinaHitCancel(Player player, LivingDamageEvent event) {
+        CompoundTag playerData = player.getPersistentData();
+        if (!playerData.contains("SkillData")) return;
+        CompoundTag skillData = playerData.getCompound("SkillData");
+        if (!skillData.contains("HinaHaloData")) return;
+        CompoundTag hinaData = skillData.getCompound("HinaHaloData");
+
+        // 被攻击时取消被动1加成
+        if (hinaData.getBoolean("Passive1Active")) {
+            hinaData.putBoolean("Passive1Active", false);
+            hinaData.putInt("ComboCount", 0);
+        }
+    }
 }

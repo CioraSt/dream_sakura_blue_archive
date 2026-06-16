@@ -314,6 +314,7 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
                         ).withStyle(Style.EMPTY.withColor(0xADD8E6))
                 );
             }
+
         }
         // 添加自定义工具提示文本
         if (this.tooltipText != null && !this.tooltipText.isEmpty()) {

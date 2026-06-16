@@ -98,7 +98,9 @@ public class RegistryItem {
                     .withSkillBinding(RegistryActiveSkill.TENDOUARIS_HALO_Skill.get())//主动技能
                     .withCurioEquipCallback(//被动技能
                             (slotContext, stack) -> {
+                                RegistryPassiveSkill.TENDOUARIS_Halo_Skill_1(slotContext, stack);
                                 RegistryPassiveSkill.TENDOUARIS_Halo_Skill_2(slotContext, stack);
+                                RegistryPassiveSkill.TENDOUARIS_Halo_Skill_3(slotContext, stack);
                             }
                     )
                     .build()
@@ -184,7 +186,7 @@ public class RegistryItem {
                             (slotContext, stack) -> {
                                 RegistryPassiveSkill.Hina_Halo_Skill_0(slotContext, stack);
                                 RegistryPassiveSkill.Hina_Halo_Skill_2(slotContext, stack);
-                                RegistryPassiveSkill.Hina_Halo_Skill_3_5(slotContext, stack);
+                                RegistryPassiveSkill.Hina_Halo_Skill_3(slotContext, stack);
 
                             }
                     ).build()

@@ -1,6 +1,5 @@
 package com.core.dream_sakura_blue_archive.ciorastao.util;
 
-import com.core.dream_sakura_blue_archive.ciorastao.effect.RegistryEffect;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import net.minecraft.ChatFormatting;
@@ -10,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -185,9 +185,9 @@ public class RegistryPassiveSkill {
             // 120s 冷却
             itemData.putLong("FirstAidCooldownEnd", currentTime + 2400);
 
-            // 生命恢复 20s
+            // 生命恢复 20s (原版生命恢复效果)
             MobEffectInstance regen = new MobEffectInstance(
-                RegistryEffect.PERCENT_REGENERATION_EFFECT.get(),
+                MobEffects.REGENERATION,
                 400, // 20s
                 passiveLevel,
                 false, true, true

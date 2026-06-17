@@ -127,12 +127,22 @@ public class DamageHandler {
             e -> e != player && e.isAlive() && !e.isAlliedTo(player));
 
         for (var target : targets) {
-            // 无视无敌帧
-            float newHealth = target.getHealth() - finalDamage;
-            if (newHealth <= 0) {
-                target.die(player.damageSources().indirectMagic(player, player));
-            } else {
-                target.setHealth(Math.max(newHealth, 0));
+            // 无视无敌帧 + 爆炸穿透50%
+            target.invulnerableTime = 0;
+            // 50%真实伤害绕过爆炸保护
+            float pen = finalDamage * 0.5f;
+            if (pen > 0 && target.isAlive()) {
+                float penHealth = target.getHealth() - pen;
+                if (penHealth <= 0) {
+                    target.die(player.damageSources().explosion(player, player));
+                } else {
+                    target.setHealth(penHealth);
+                }
+            }
+            // 50%正常伤害
+            float normal = finalDamage * 0.5f;
+            if (normal > 0 && target.isAlive()) {
+                target.hurt(player.damageSources().explosion(player, player), normal);
             }
             // 眩晕
             if (stunDuration > 0 && RegistryEffect.STUN_EFFECT != null) {

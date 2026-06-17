@@ -89,7 +89,7 @@ public class RegistryItem {
                     .withHaloLevelSystem()
                     .withBAElementsParticles()
                     .withGlowColor(ALS_GLOW)//发光颜色控制
-                    .withGlowIntensity(1f)//发光强度控制
+                    .withGlowIntensity(0.8f)//发光强度控制(降低20%)
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 4.0F, 1500.0F, 0xD00A0A1A, 0xD04169E1, 0xFF00FFFF, 0xFFFFFFFF,
                             0.0F, -25.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/tendouaris.png"},
@@ -203,7 +203,7 @@ public class RegistryItem {
             )
                     .withHaloLevelSystem()
                     .withBAElementsParticles()
-                    .withGlowIntensity(1f)
+                    .withGlowIntensity(0.8f)
                     .withGlowColor(WHITE_GLOW)
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 3.0F, 2500.0F, 0xD0F0F8FF, 0xD0DDA0DD, 0xFFFFB6C1, 0xFFE6E6FA,
@@ -225,7 +225,7 @@ public class RegistryItem {
             )
                     .withHaloLevelSystem()
                     .withBAElementsParticles()
-                    .withGlowIntensity(1f)
+                    .withGlowIntensity(0.8f)
                     .withGlowColor(WHITE_GLOW)
                     .withSkillBinding(RegistryActiveSkill.SHIROKO_Halo_Skill.get())
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(

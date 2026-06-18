@@ -117,6 +117,80 @@ public class ClientSetup {
                 RegistryItem.REN_HALO.get(),
                 () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
         );
+
+        // === 新形态光环 ===
+        CuriosRendererRegistry.register(
+                RegistryItem.SHIROKO_CYCLING_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.SHIROKO_SWIMSUIT_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.HOSHINO_SWIMSUIT_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.AYANE_SWIMSUIT_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.HINA_DRESS_HALO.get(),
+                () -> new GeckoCurioRendererY<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.HINA_SWIMSUIT_HALO.get(),
+                () -> new GeckoCurioRendererY<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.TENDOUARIS_BATTLE_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.TENDOUARIS_MAID_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.SHIRASUAZUSA_SWIMSUIT_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.KAYOKO_NEWYEAR_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.YUZU_BATTLE_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.YUZU_MAID_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.NATSU_BAND_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.MARI_IDOL_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.MARI_GYM_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.SEIA_SWIMSUIT_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.MIDORI_MAID_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.MOMOI_MAID_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
     }
 
 

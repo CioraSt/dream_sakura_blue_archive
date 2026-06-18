@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "dream_sakura_blue_archive:item/mari_gym_halo_gui"
+  }
+}

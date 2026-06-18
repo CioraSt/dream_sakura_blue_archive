@@ -73,6 +73,50 @@ public class ClientSetup {
                 RegistryItem.KARENA_HALO.get(),
                 () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
         );
+        CuriosRendererRegistry.register(
+                RegistryItem.JUGUANG_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.JUWANG_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.KAIYI_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.MARI_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.SEIA_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.SHUN_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.MIDORI_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.MOMOI_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.NATSU_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.YUZU_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.REN_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
     }
 
 

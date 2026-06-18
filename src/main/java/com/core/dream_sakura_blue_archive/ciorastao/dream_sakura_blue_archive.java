@@ -34,20 +34,37 @@ public class dream_sakura_blue_archive {
             .icon(() -> RegistryItem.TENDOUARIS_HALO.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
 
-                output.accept(RegistryItem.SHIROKO_HALO.get());
-                output.accept(RegistryItem.HOSHINO_HALO.get());
-                output.accept(RegistryItem.HINA_HALO.get());
-                output.accept(RegistryItem.TENDOUARIS_HALO.get());
-                output.accept(RegistryItem.KLUONUOYA_HALO.get());
-                output.accept(RegistryItem.SAKULUNA_HALO.get());
-                output.accept(RegistryItem.NONOMI_HALO.get());
-                output.accept(RegistryItem.SERLKA_HALO.get());
-                output.accept(RegistryItem.SHIRASUAZUSA_HALO.get());
-                output.accept(RegistryItem.AYANE_HALO.get());
-                output.accept(RegistryItem.KAYOKO_HALO.get());
-                output.accept(RegistryItem.YUME_HALO.get());
-                output.accept(RegistryItem.KUROKO_HALO.get());
-                output.accept(RegistryItem.KARENA_HALO.get());
+                // === 阿比多斯 ===
+                output.accept(RegistryItem.SHIROKO_HALO.get());      // 砂狼白子
+                output.accept(RegistryItem.HOSHINO_HALO.get());      // 小鸟游星野
+                output.accept(RegistryItem.SERLKA_HALO.get());       // 黑见芹香
+                output.accept(RegistryItem.NONOMI_HALO.get());       // 十六夜野宫
+                output.accept(RegistryItem.AYANE_HALO.get());        // 奥空绫音
+                output.accept(RegistryItem.YUME_HALO.get());         // 梦
+                // === 格黑娜 ===
+                output.accept(RegistryItem.HINA_HALO.get());         // 空崎日奈
+                output.accept(RegistryItem.KAYOKO_HALO.get());       // 鬼方佳代子
+                // === 千年 ===
+                output.accept(RegistryItem.TENDOUARIS_HALO.get());   // 天童爱丽丝
+                output.accept(RegistryItem.YUZU_HALO.get());         // 柚子
+                output.accept(RegistryItem.MOMOI_HALO.get());        // 才羽小桃
+                output.accept(RegistryItem.MIDORI_HALO.get());       // 才羽小绿
+                output.accept(RegistryItem.KAIYI_HALO.get());        // 凯
+                output.accept(RegistryItem.KLUONUOYA_HALO.get());    // K螺诺亚
+                // === 三一 ===
+                output.accept(RegistryItem.SHIRASUAZUSA_HALO.get()); // 白洲梓
+                output.accept(RegistryItem.MARI_HALO.get());         // 伊落玛丽
+                output.accept(RegistryItem.SEIA_HALO.get());         // 圣园圣娅
+                // === 山海经 ===
+                output.accept(RegistryItem.SHUN_HALO.get());         // 春原瞬
+                output.accept(RegistryItem.KARENA_HALO.get());       // 春原心奈
+                // === 其他 ===
+                output.accept(RegistryItem.SAKULUNA_HALO.get());     // 七叶渡羽
+                output.accept(RegistryItem.JUGUANG_HALO.get());      // 橘光
+                output.accept(RegistryItem.JUWANG_HALO.get());       // 橘望
+                output.accept(RegistryItem.NATSU_HALO.get());        // 小夏
+                output.accept(RegistryItem.KUROKO_HALO.get());       // 砂狼黑子
+                output.accept(RegistryItem.REN_HALO.get());          // 联邦学生会长
 
             }).build()
     );

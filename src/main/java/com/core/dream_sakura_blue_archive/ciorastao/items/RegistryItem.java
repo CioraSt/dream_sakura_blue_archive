@@ -143,6 +143,10 @@ public class RegistryItem {
                     .withGlowColor(PINK_GLOW)
                     .build()
     );
+    private static final float[] GREY_GLOW = {0.35f, 0.38f, 0.5f}; // 佳代子灰蓝
+    private static final float[] AMBER_GLOW = {1.0f, 0.78f, 0.3f}; // 梦琥珀金
+    private static final float[] VIOLET_GLOW = {0.56f, 0.28f, 0.84f}; // 黑子暗紫(亮度+40%)
+    private static final float[] PINK_LIGHT_GLOW = {1.0f, 0.6f, 0.7f}; // 心奈浅粉
     //奥空绫音光环 注册AYANE_HALO
     public static final RegistryObject<Item> AYANE_HALO = ITEMS.register(
             "ayaneko_halo",
@@ -156,10 +160,91 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowIntensity(1f)
                     .withGlowColor(PINK_GLOW)
-
-//                    .withSkillBinding(RegistryActiveSkill.AYANE_Halo_Skill.get())
-//                    .withCurioEquipCallback(
-//                            (slotContext, stack) -> {}
+                    .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
+                            192, 192, 1.8F, 3000.0F, 0xD0FFE4E1, 0xD0FFB6C1, 0xFFFF69B4, 0xFFFF1493,
+                            0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/ayaneko.png"},
+                            new int[]{336}, new int[]{1024}, 132, 132, 0.0F, 0.0F, 40, 0.8F, 1.2F, 3, 2000L, true, false
+                    ))
+                    .build()
+    );
+    //鬼方佳代子光环 注册KAYOKO_HALO
+    public static final RegistryObject<Item> KAYOKO_HALO = ITEMS.register(
+            "kayoko_halo",
+            () -> new DecorationItem.Builder(
+                    "kayoko_halo",
+                    new Item.Properties()
+                            .stacksTo(1)
+                            .rarity(Rarity.EPIC)
+            )
+                    .withHaloLevelSystem()
+                    .withBAElementsParticles()
+                    .withGlowColor(GREY_GLOW)
+                    .withGlowIntensity(1f)
+                    .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
+                            192, 192, 2.0F, 3500.0F, 0xD01A1A40, 0xD0B0C4DE, 0xFF4169E1, 0xFF87CEEB,
+                            0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/kayoko.png"},
+                            new int[]{403}, new int[]{1022}, 132, 132, 0.0F, 0.0F, 40, 0.75F, 1.2F, 3, 2000L, true, false
+                    ))
+                    .build()
+    );
+    //梦光环 注册YUME_HALO
+    public static final RegistryObject<Item> YUME_HALO = ITEMS.register(
+            "yume_halo",
+            () -> new DecorationItem.Builder(
+                    "yume_halo",
+                    new Item.Properties()
+                            .stacksTo(1)
+                            .rarity(Rarity.EPIC)
+            )
+                    .withHaloLevelSystem()
+                    .withBAElementsParticles()
+                    .withGlowColor(AMBER_GLOW)
+                    .withGlowIntensity(1f)
+                    .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
+                            192, 192, 3.0F, 2500.0F, 0xD0F3E5F5, 0xD0E1BEE7, 0xFFDDA0DD, 0xFFBA55D3,
+                            0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/yume.png"},
+                            new int[]{609}, new int[]{1229}, 132, 132, 0.0F, 0.0F, 40, 0.8F, 1.4F, 3, 2000L, true, false
+                    ))
+                    .build()
+    );
+    //砂狼黑子光环 注册KUROKO_HALO
+    public static final RegistryObject<Item> KUROKO_HALO = ITEMS.register(
+            "kuroko_halo",
+            () -> new DecorationItem.Builder(
+                    "kuroko_halo",
+                    new Item.Properties()
+                            .stacksTo(1)
+                            .rarity(Rarity.EPIC)
+            )
+                    .withHaloLevelSystem()
+                    .withBAElementsParticles()
+                    .withGlowColor(VIOLET_GLOW)
+                    .withGlowIntensity(1f)
+                    .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
+                            192, 192, 3.5F, 2000.0F, 0xD01A0020, 0xD04A0080, 0xFF8B00FF, 0xFFD8BFD8,
+                            0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/kuroko.png"},
+                            new int[]{1125}, new int[]{1517}, 132, 132, 0.0F, 0.0F, 40, 0.75F, 1.5F, 3, 2000L, true, false
+                    ))
+                    .build()
+    );
+    //春原心奈光环 注册KARENA_HALO
+    public static final RegistryObject<Item> KARENA_HALO = ITEMS.register(
+            "karena_halo",
+            () -> new DecorationItem.Builder(
+                    "karena_halo",
+                    new Item.Properties()
+                            .stacksTo(1)
+                            .rarity(Rarity.EPIC)
+            )
+                    .withHaloLevelSystem()
+                    .withBAElementsParticles()
+                    .withGlowColor(PINK_LIGHT_GLOW)
+                    .withGlowIntensity(1f)
+                    .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
+                            192, 192, 3.0F, 2500.0F, 0xD0FFE4E1, 0xD0FFB6C1, 0xFFFF69B4, 0xFFFF1493,
+                            0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/karena.png"},
+                            new int[]{706}, new int[]{1028}, 132, 132, 0.0F, 0.0F, 40, 0.8F, 1.3F, 3, 2000L, true, false
+                    ))
                     .build()
     );
     private static final float[] PURPLE_GLOW = {0.6f, 0.2f, 0.8f}; // 紫色

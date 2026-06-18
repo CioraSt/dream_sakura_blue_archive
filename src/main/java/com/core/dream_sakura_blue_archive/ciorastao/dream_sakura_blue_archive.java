@@ -43,7 +43,11 @@ public class dream_sakura_blue_archive {
                 output.accept(RegistryItem.NONOMI_HALO.get());
                 output.accept(RegistryItem.SERLKA_HALO.get());
                 output.accept(RegistryItem.SHIRASUAZUSA_HALO.get());
-                //output.accept(RegistryItem.AYANE_HALO.get());
+                output.accept(RegistryItem.AYANE_HALO.get());
+                output.accept(RegistryItem.KAYOKO_HALO.get());
+                output.accept(RegistryItem.YUME_HALO.get());
+                output.accept(RegistryItem.KUROKO_HALO.get());
+                output.accept(RegistryItem.KARENA_HALO.get());
 
             }).build()
     );

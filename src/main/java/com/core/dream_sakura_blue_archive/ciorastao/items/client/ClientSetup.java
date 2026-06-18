@@ -57,6 +57,22 @@ public class ClientSetup {
                 RegistryItem.SHIRASUAZUSA_HALO.get(),
                 () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
         );
+        CuriosRendererRegistry.register(
+                RegistryItem.KAYOKO_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.YUME_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.KUROKO_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
+        CuriosRendererRegistry.register(
+                RegistryItem.KARENA_HALO.get(),
+                () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+        );
     }
 
 

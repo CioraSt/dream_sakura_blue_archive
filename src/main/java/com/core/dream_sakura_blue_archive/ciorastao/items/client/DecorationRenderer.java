@@ -107,8 +107,8 @@ public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
         float[] glowColor = item.getGlowColor();
         float glowIntensity = item.getGlowIntensity();
 
-        // 创建眼睛渲染类型并获取对应的顶点缓冲区
-        RenderType glowRenderType = RenderType.eyes(glowTexture);
+        // 创建发光渲染类型并获取对应的顶点缓冲区
+        RenderType glowRenderType = Renders.HALO_TYPT_NC.apply(glowTexture);
         VertexConsumer glowBuffer = bufferSource.getBuffer(glowRenderType);
 
         // 获取烘焙的几何模型

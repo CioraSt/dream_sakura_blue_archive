@@ -12,6 +12,11 @@ import com.core.dream_sakura.tooltip.TooltipHelper;
 import com.core.dream_sakura_blue_archive.ciorastao.items.client.DecorationRenderer;
 import com.core.dream_sakura_blue_archive.ciorastao.items.client.IGlowingItem;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloLevelManager;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloSkillDefinitions;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloSkillRuntime;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloVariantHelper;
+import com.core.dream_sakura_blue_archive.ciorastao.util.RegistryActiveSkill;
+import com.core.dream_sakura_blue_archive.ciorastao.util.RegistryPassiveSkill;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -82,14 +87,18 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
     private DecorationItem(Builder builder) {
         super(builder.properties.stacksTo(1));
         this.itemId = builder.itemId;
-        this.curioEquipCallback = builder.curioEquipCallback;
+        BiConsumer<SlotContext, ItemStack> callback = builder.curioEquipCallback;
+        if (HaloSkillDefinitions.contains(this.itemId)) {
+            callback = callback.andThen((slotContext, stack) -> RegistryPassiveSkill.tickHalo(slotContext, stack, getEffectiveItemId(stack)));
+        }
+        this.curioEquipCallback = callback;
         this.immunityProvider = builder.immunityProvider;
         this.glowColor = builder.glowColor != null ? builder.glowColor : new float[]{1.0f, 0.84f, 0.0f};
         this.glowIntensity = builder.glowIntensity != null ? builder.glowIntensity : 1.0f;
         this.tooltipColor = builder.tooltipColor != null ? builder.tooltipColor : Collections.emptyList();
         this.tooltipText = builder.tooltipText;
         this.tooltipTranslationKey = builder.tooltipTranslationKey;
-        this.skillBinding = builder.skillBinding;
+        this.skillBinding = builder.skillBinding != null ? builder.skillBinding : RegistryActiveSkill.createHaloSkill(this.itemId);
         this.musicResource = builder.musicResource;
         this.onCraftedCallback = builder.onCraftedCallback;
         this.particleConfig = builder.particleConfig;
@@ -298,8 +307,7 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
                     ).withStyle(Style.EMPTY.withColor(0xFF00FF))
             );
 
-            // 只有在达到 90 级且经验值已满时才显示 MAX，否则显示正常经验值
-            if (itemLevel >= 90 && itemXp >= itemMaxXp) {
+            if (itemLevel >= HaloLevelManager.MAX_LEVEL && itemXp >= itemMaxXp) {
                 tooltip.add(
                         Component.translatable(
                                 "tooltip.dream_sakura_blue_archive.xp.max"
@@ -323,8 +331,9 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
 
         // 添加Shift/Ctrl详细描述（使用前置模组的TooltipHelper）
         if (level != null && level.isClientSide() && this.itemId != null) {
+            String effectiveItemId = getEffectiveItemId(stack);
             TooltipHelper.addTooltip(
-                    this.itemId,
+                    effectiveItemId,
                     stack,
                     level,
                     tooltip,
@@ -336,9 +345,10 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
         }
 
         if (this.skillBinding != null) {
+            String effectiveItemId = getEffectiveItemId(stack);
             TooltipHelper.addSkillsDescription(
                     tooltip,
-                    this.skillBinding.getDescription(),
+                    HaloSkillRuntime.skillDescriptionId(effectiveItemId),
                     this.skillBinding.getkeyMapping().getKey().getName()
             );
         }
@@ -391,6 +401,15 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
      */
     public String getItemId() {
         return itemId;
+    }
+
+    public String getEffectiveItemId(ItemStack stack) {
+        return HaloVariantHelper.effectiveItemId(stack, this.itemId);
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        return Component.translatable("item.dream_sakura_blue_archive." + getEffectiveItemId(stack));
     }
     //#endregion
 
@@ -686,7 +705,9 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
          * @return - Builder实例
          */
         public Builder withCurioEquipCallback(BiConsumer<SlotContext, ItemStack> callback) {
-            this.curioEquipCallback = callback;
+            if (callback != null) {
+                this.curioEquipCallback = this.curioEquipCallback.andThen(callback);
+            }
             return this;
         }
 

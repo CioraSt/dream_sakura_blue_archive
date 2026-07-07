@@ -8,6 +8,8 @@ import net.minecraft.world.item.ItemStack;
  * 用于统一管理光环物品的等级系统
  */
 public class HaloLevelManager {
+    public static final int MAX_LEVEL = 100;
+    public static final int DEFAULT_MAX_XP = 1024;
 
     /**
      * 获取光环等级
@@ -42,7 +44,7 @@ public class HaloLevelManager {
         }
 
         CompoundTag tag = stack.getOrCreateTag();
-        tag.putInt("level", level);
+        tag.putInt("level", Math.max(1, Math.min(MAX_LEVEL, level)));
         stack.setTag(tag);
     }
 
@@ -105,14 +107,14 @@ public class HaloLevelManager {
      */
     public static int getMaxHaloXP(ItemStack stack) {
         if (stack.isEmpty()) {
-            return 1024;
+            return DEFAULT_MAX_XP;
         }
 
         CompoundTag tag = stack.getOrCreateTag();
         if (!tag.contains("maxXp")) {
             // 初始化最大经验值为1024
-            setMaxHaloXP(stack, 1024);
-            return 1024;
+            setMaxHaloXP(stack, DEFAULT_MAX_XP);
+            return DEFAULT_MAX_XP;
         }
 
         return tag.getInt("maxXp");
@@ -142,33 +144,38 @@ public class HaloLevelManager {
      * @return 是否成功升级
      */
     public static boolean addHaloXP(ItemStack stack, int xp) {
-        int currentXP = getHaloXP(stack);
-        int maxXP = getMaxHaloXP(stack);
-        int newXP = currentXP + xp;
-
-        setHaloXP(stack, newXP);
-
-        // 检查是否达到升级条件
-        if (newXP >= maxXP) {
-            // 计算升级次数
-            int levelsToAdd = newXP / maxXP;
-            increaseHaloLevel(stack, levelsToAdd);
-
-            // 剩余经验值
-            int remainingXP = newXP % maxXP;
-            setHaloXP(stack, remainingXP);
-
-            // 可选：随着等级提升，增加升级所需经验值
-            // 每10级增加10%的经验需求
-            int currentLevel = getHaloLevel(stack);
-            if (currentLevel % 10 == 0) {
-                setMaxHaloXP(stack, (int) (maxXP * 1.1));
-            }
-
-            return true; // 成功升级
+        if (stack.isEmpty() || xp <= 0 || isMaxed(stack)) {
+            return false;
         }
 
-        return false; // 未升级
+        int itemLevel = getHaloLevel(stack);
+        int itemXp = getHaloXP(stack);
+        int itemMaxXp = getMaxHaloXP(stack);
+        int newXp = itemXp + xp;
+        boolean leveled = false;
+
+        while (newXp >= itemMaxXp && itemLevel < MAX_LEVEL) {
+            newXp -= itemMaxXp;
+            itemLevel++;
+            itemMaxXp = (int) OtherHelper.expCalculate(itemLevel);
+            leveled = true;
+        }
+
+        if (itemLevel >= MAX_LEVEL) {
+            itemLevel = MAX_LEVEL;
+            newXp = Math.min(newXp, itemMaxXp);
+        } else if (newXp > itemMaxXp) {
+            newXp = itemMaxXp;
+        }
+
+        setHaloLevel(stack, itemLevel);
+        setHaloXP(stack, newXp);
+        setMaxHaloXP(stack, itemMaxXp);
+        return leveled;
+    }
+
+    public static boolean isMaxed(ItemStack stack) {
+        return getHaloLevel(stack) >= MAX_LEVEL && getHaloXP(stack) >= getMaxHaloXP(stack);
     }
 
     /**

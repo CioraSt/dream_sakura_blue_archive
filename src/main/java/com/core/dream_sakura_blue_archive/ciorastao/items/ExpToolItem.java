@@ -1,6 +1,7 @@
 package com.core.dream_sakura_blue_archive.ciorastao.items;
 
 import com.core.dream_sakura_blue_archive.ciorastao.dream_sakura_blue_archive;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloLevelManager;
 import com.core.dream_sakura_blue_archive.ciorastao.util.OtherHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -77,60 +78,17 @@ public class ExpToolItem extends Item {
             }
 
             if (supportsLevelSystem) {
-                // 获取光环的当前等级、经验值和最大经验值
-                CompoundTag haloTag = halo.getOrCreateTag();
-                int itemLevel = haloTag.getInt("level");
-                int itemXp = haloTag.getInt("xp");
-                int itemMaxXp = haloTag.getInt("maxXp");
-
-                // 如果光环等级已达到 90 级且经验值已满，发送提示信息并返回失败（不消耗物品）
-                if (itemLevel >= 90 && itemXp >= itemMaxXp) {
+                if (HaloLevelManager.isMaxed(halo)) {
                     player.sendSystemMessage(Component.translatable("message.dream_sakura_blue_archive.halo_max_level"));
                     return InteractionResultHolder.fail(itemStack);
                 }
 
-                // 计算新的经验值
-                int newXp = itemXp + getXp();
-
-                // 处理升级逻辑
-                while (newXp >= itemMaxXp && itemLevel < 90) {
-                    // 先升级到下一级
-                    itemLevel++;
-                    // 计算下一级所需经验值
-                    itemMaxXp = (int) OtherHelper.expCalculate(itemLevel);
-                    // 减去升级消耗的经验
-                    newXp = newXp - itemMaxXp;
-
-                    // 确保经验值不为负数
-                    if (newXp < 0) {
-                        newXp = 0;
-                    }
-
-                    // 如果达到 90 级，限制经验值不超过最大值
-                    if (itemLevel >= 90) {
-                        if (newXp > itemMaxXp) {
-                            newXp = itemMaxXp;
-                        }
-                        break;
-                    }
-                }
-
-                // 如果未达到 90 级但经验值超过了当前等级上限，则截断到上限（不升级）
-                if (itemLevel < 90 && newXp > itemMaxXp) {
-                    newXp = itemMaxXp;
-                }
-
-                // 只有当经验值确实增加时才消耗物品并更新数据
-                if (newXp > itemXp || itemLevel > haloTag.getInt("level")) {
-                    // 消耗一个物品
+                int beforeLevel = HaloLevelManager.getHaloLevel(halo);
+                int beforeXp = HaloLevelManager.getHaloXP(halo);
+                HaloLevelManager.addHaloXP(halo, getXp());
+                if (HaloLevelManager.getHaloLevel(halo) > beforeLevel || HaloLevelManager.getHaloXP(halo) > beforeXp) {
                     itemStack.shrink(1);
-
-                    // 更新光环标签中的等级、经验值和最大经验值
-                    haloTag.putInt("level", itemLevel);
-                    haloTag.putInt("xp", newXp);
-                    haloTag.putInt("maxXp", itemMaxXp);
                 } else {
-                    // 经验值没有变化（已满），不消耗物品
                     return InteractionResultHolder.fail(itemStack);
                 }
             }

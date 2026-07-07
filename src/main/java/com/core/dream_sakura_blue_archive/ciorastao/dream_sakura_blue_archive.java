@@ -2,6 +2,7 @@ package com.core.dream_sakura_blue_archive.ciorastao;
 
 import com.core.dream_sakura_blue_archive.ciorastao.effect.RegistryEffect;
 import com.core.dream_sakura_blue_archive.ciorastao.items.RegistryItem;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloVariantHelper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -34,55 +35,53 @@ public class dream_sakura_blue_archive {
             .icon(() -> RegistryItem.TENDOUARIS_HALO.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
 
-                // === 阿比多斯 ===
-                output.accept(RegistryItem.SHIROKO_HALO.get());             // 砂狼白子
-                output.accept(RegistryItem.SHIROKO_CYCLING_HALO.get());     // 砂狼白子（骑行）
-                output.accept(RegistryItem.SHIROKO_SWIMSUIT_HALO.get());    // 砂狼白子（泳装）
-                output.accept(RegistryItem.HOSHINO_HALO.get());             // 小鸟游星野
-                output.accept(RegistryItem.HOSHINO_SWIMSUIT_HALO.get());    // 小鸟游星野（泳装）
-                output.accept(RegistryItem.SERLKA_HALO.get());              // 黑见芹香
-                output.accept(RegistryItem.NONOMI_HALO.get());              // 十六夜野宫
-                output.accept(RegistryItem.AYANE_HALO.get());               // 奥空绫音
-                output.accept(RegistryItem.AYANE_SWIMSUIT_HALO.get());      // 奥空绫音（泳装）
-                output.accept(RegistryItem.YUME_HALO.get());                // 梦
-                // === 格黑娜 ===
-                output.accept(RegistryItem.HINA_HALO.get());                // 空崎日奈
-                output.accept(RegistryItem.HINA_DRESS_HALO.get());          // 空崎日奈（礼服）
-                output.accept(RegistryItem.HINA_SWIMSUIT_HALO.get());       // 空崎日奈（泳装）
-                output.accept(RegistryItem.KAYOKO_HALO.get());              // 鬼方佳代子
-                output.accept(RegistryItem.KAYOKO_NEWYEAR_HALO.get());      // 鬼方佳代子（正月）
-                // === 千年 ===
-                output.accept(RegistryItem.TENDOUARIS_HALO.get());          // 天童爱丽丝
-                output.accept(RegistryItem.TENDOUARIS_BATTLE_HALO.get());   // 天童爱丽丝（临战）
-                output.accept(RegistryItem.TENDOUARIS_MAID_HALO.get());     // 天童爱丽丝（女仆）
-                output.accept(RegistryItem.YUZU_HALO.get());                // 花冈柚子
-                output.accept(RegistryItem.YUZU_BATTLE_HALO.get());         // 花冈柚子（临战）
-                output.accept(RegistryItem.YUZU_MAID_HALO.get());           // 花冈柚子（女仆）
-                output.accept(RegistryItem.MOMOI_HALO.get());               // 才羽桃井
-                output.accept(RegistryItem.MOMOI_MAID_HALO.get());          // 才羽桃井（女仆）
-                output.accept(RegistryItem.MIDORI_HALO.get());              // 才羽绿
-                output.accept(RegistryItem.MIDORI_MAID_HALO.get());         // 才羽绿（女仆）
-                output.accept(RegistryItem.KAIYI_HALO.get());               // 凯伊
-                output.accept(RegistryItem.KLUONUOYA_HALO.get());           // K螺诺亚
-                // === 三一 ===
-                output.accept(RegistryItem.SHIRASUAZUSA_HALO.get());        // 白洲梓
-                output.accept(RegistryItem.SHIRASUAZUSA_SWIMSUIT_HALO.get());// 白洲梓（泳装）
-                output.accept(RegistryItem.MARI_HALO.get());                // 伊落玛丽
-                output.accept(RegistryItem.MARI_IDOL_HALO.get());           // 伊落玛丽（偶像）
-                output.accept(RegistryItem.MARI_GYM_HALO.get());            // 伊落玛丽（体操服）
-                output.accept(RegistryItem.SEIA_HALO.get());                // 圣园圣娅
-                output.accept(RegistryItem.SEIA_SWIMSUIT_HALO.get());       // 圣园圣娅（泳装）
-                output.accept(RegistryItem.NATSU_HALO.get());               // 柚鸟夏
-                output.accept(RegistryItem.NATSU_BAND_HALO.get());          // 柚鸟夏（乐队）
-                // === 山海经 ===
-                output.accept(RegistryItem.SHUN_HALO.get());                // 春原瞬
-                output.accept(RegistryItem.KARENA_HALO.get());              // 春原心奈
-                // === 其他 ===
-                output.accept(RegistryItem.SAKULUNA_HALO.get());            // 七叶渡羽
-                output.accept(RegistryItem.JUGUANG_HALO.get());             // 橘光
-                output.accept(RegistryItem.JUWANG_HALO.get());              // 橘望
-                output.accept(RegistryItem.KUROKO_HALO.get());              // 砂狼黑子
-                output.accept(RegistryItem.REN_HALO.get());                 // 联邦学生会长
+                output.accept(RegistryItem.SHIROKO_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.SHIROKO_HALO.get(), "shiroko_cycling_halo"));
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.SHIROKO_HALO.get(), "shiroko_swimsuit_halo"));
+                output.accept(RegistryItem.HOSHINO_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.HOSHINO_HALO.get(), "hoshino_swimsuit_halo"));
+                output.accept(RegistryItem.SERLKA_HALO.get());
+                output.accept(RegistryItem.NONOMI_HALO.get());
+                output.accept(RegistryItem.AYANE_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.AYANE_HALO.get(), "ayane_swimsuit_halo"));
+                output.accept(RegistryItem.YUME_HALO.get());
+
+                output.accept(RegistryItem.HINA_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.HINA_HALO.get(), "hina_dress_halo"));
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.HINA_HALO.get(), "hina_swimsuit_halo"));
+                output.accept(RegistryItem.KAYOKO_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.KAYOKO_HALO.get(), "kayoko_newyear_halo"));
+
+                output.accept(RegistryItem.TENDOUARIS_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.TENDOUARIS_HALO.get(), "tendouaris_battle_halo"));
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.TENDOUARIS_HALO.get(), "tendouaris_maid_halo"));
+                output.accept(RegistryItem.YUZU_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.YUZU_HALO.get(), "yuzu_battle_halo"));
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.YUZU_HALO.get(), "yuzu_maid_halo"));
+                output.accept(RegistryItem.MOMOI_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.MOMOI_HALO.get(), "momoi_maid_halo"));
+                output.accept(RegistryItem.MIDORI_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.MIDORI_HALO.get(), "midori_maid_halo"));
+                output.accept(RegistryItem.KAIYI_HALO.get());
+                output.accept(RegistryItem.KLUONUOYA_HALO.get());
+
+                output.accept(RegistryItem.SHIRASUAZUSA_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.SHIRASUAZUSA_HALO.get(), "shirasuazusa_swimsuit_halo"));
+                output.accept(RegistryItem.MARI_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.MARI_HALO.get(), "mari_idol_halo"));
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.MARI_HALO.get(), "mari_gym_halo"));
+                output.accept(RegistryItem.SEIA_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.SEIA_HALO.get(), "seia_swimsuit_halo"));
+                output.accept(RegistryItem.NATSU_HALO.get());
+                output.accept(HaloVariantHelper.createVariantStack(RegistryItem.NATSU_HALO.get(), "natsu_band_halo"));
+
+                output.accept(RegistryItem.SHUN_HALO.get());
+                output.accept(RegistryItem.KARENA_HALO.get());
+                output.accept(RegistryItem.SAKULUNA_HALO.get());
+                output.accept(RegistryItem.JUGUANG_HALO.get());
+                output.accept(RegistryItem.JUWANG_HALO.get());
+                output.accept(RegistryItem.KUROKO_HALO.get());
+                output.accept(RegistryItem.REN_HALO.get());
 
             }).build()
     );

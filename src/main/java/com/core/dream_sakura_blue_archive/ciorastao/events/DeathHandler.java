@@ -2,6 +2,8 @@ package com.core.dream_sakura_blue_archive.ciorastao.events;
 
 import com.core.dream_sakura_blue_archive.ciorastao.dream_sakura_blue_archive;
 import com.core.dream_sakura_blue_archive.ciorastao.items.DecorationItem;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloLevelManager;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloSkillRuntime;
 import com.core.dream_sakura_blue_archive.ciorastao.util.OtherHelper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -45,13 +47,7 @@ public class DeathHandler {
                     return;
                 }
 
-                CompoundTag haloTag = haloStack.getOrCreateTag();
-                int itemLevel = haloTag.getInt("level");
-                int itemXp = haloTag.getInt("xp");
-                int itemMaxXp = haloTag.getInt("maxXp");
-
-                // 检查是否已达到满级 90 级且经验值已满，满级后不再获取经验
-                if (itemLevel >= 90 && itemXp >= itemMaxXp) {
+                if (HaloLevelManager.isMaxed(haloStack)) {
                     return;
                 }
 
@@ -61,37 +57,14 @@ public class DeathHandler {
                     randomExp = RANDOM.nextInt(50, 201);
                 }
 
-                // 添加经验值，但不能超过当前等级的最大经验值
-                int newXp = itemXp + randomExp;
-
-                // 循环处理升级，直到经验不足或达到满级
-                while (newXp >= itemMaxXp && itemLevel < 90) {
-                    itemLevel++;
-                    itemMaxXp = (int) OtherHelper.expCalculate(itemLevel);
-                    newXp = newXp - itemMaxXp;
-
-                    // 确保经验值不为负数
-                    if (newXp < 0) {
-                        newXp = 0;
-                    }
-
-                    // 达到满级后，清空多余经验
-                    if (itemLevel >= 90) {
-                        newXp = 0;
-                        break;
-                    }
-                }
-
-                // 如果未达到 90 级但经验值超过了当前等级上限，则截断到上限
-                if (itemLevel < 90 && newXp > itemMaxXp) {
-                    newXp = itemMaxXp;
-                }
-
-                haloTag.putInt("level", itemLevel);
-                haloTag.putInt("xp", newXp);
-                haloTag.putInt("maxXp", itemMaxXp);
+                HaloLevelManager.addHaloXP(haloStack, randomExp);
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void HaloRuntimeKillEvent(LivingDeathEvent event) {
+        HaloSkillRuntime.onLivingDeath(event);
     }
 
     // 星野光环被动1吸血逻辑

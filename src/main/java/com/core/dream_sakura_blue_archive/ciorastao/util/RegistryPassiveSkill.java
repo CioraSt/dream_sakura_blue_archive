@@ -28,6 +28,9 @@ import java.util.UUID;
  * 被动技能注册类
  */
 public class RegistryPassiveSkill {
+    public static void tickHalo(SlotContext slotContext, ItemStack stack, String itemId) {
+        HaloSkillRuntime.onCurioTick(slotContext, stack, itemId);
+    }
 
     // 通用属性修饰符UUID
     private static final UUID DAMAGE_MODIFIER_UUID      = UUID.fromString("389b669a-4576-4bb2-9e87-ede652fbc7c9");
@@ -152,13 +155,13 @@ public class RegistryPassiveSkill {
     // 小鸟游 星野 (HOSHINO)
     // ============================================================
 
-    /** TXT 被动2 10档: 护甲值 +10~+100 */
+    /** DBA balanced passive2: armor +5~+50 */
     private static final float[] HOSHINO_P2_ARMOR_FLAT = {
-        10f, 20f, 30f, 40f, 50f, 60f, 70f, 80f, 90f, 100f
+        5f, 8f, 12f, 16f, 21f, 27f, 34f, 40f, 45f, 50f
     };
-    /** TXT 被动2 10档: 护甲% +0.10~+1.00 */
-    private static final float[] HOSHINO_P2_ARMOR_PCT = {
-        0.10f, 0.20f, 0.30f, 0.40f, 0.50f, 0.60f, 0.70f, 0.80f, 0.90f, 1.00f
+    /** DBA balanced passive2: armor toughness +1~+10 */
+    private static final float[] HOSHINO_P2_ARMOR_TOUGHNESS = {
+        1f, 1f, 2f, 2f, 3f, 4f, 5f, 6f, 8f, 10f
     };
 
     /**
@@ -219,9 +222,9 @@ public class RegistryPassiveSkill {
             OtherHelper.removeExistingModifier(modifiersList, HOSHINO_ARMOR_PCT_UUID);
 
             float armorFlat = OtherHelper.getPassiveValue(haloLevel, HOSHINO_P2_ARMOR_FLAT);
-            float armorPct = OtherHelper.getPassiveValue(haloLevel, HOSHINO_P2_ARMOR_PCT);
+            float armorToughness = OtherHelper.getPassiveValue(haloLevel, HOSHINO_P2_ARMOR_TOUGHNESS);
             OtherHelper.addModifier(modifiersList, "minecraft:generic.armor", armorFlat, 0, HOSHINO_ARMOR_FLAT_UUID, "halo");
-            OtherHelper.addModifier(modifiersList, "minecraft:generic.armor", armorPct, 2, HOSHINO_ARMOR_PCT_UUID, "halo");
+            OtherHelper.addModifier(modifiersList, "minecraft:generic.armor_toughness", armorToughness, 0, HOSHINO_ARMOR_PCT_UUID, "halo");
             itemData.put("CurioAttributeModifiers", modifiersList);
         }
     }
@@ -245,9 +248,9 @@ public class RegistryPassiveSkill {
     // 空崎 日奈 (HINA)
     // ============================================================
 
-    /** TXT 被动2 10档: 攻击速度 */
+    /** DBA balanced passive2: attack speed +10%~+35% */
     private static final float[] HINA_P2_ATTACK_SPEED = {
-        0.15f, 0.30f, 0.45f, 0.60f, 0.75f, 0.90f, 1.15f, 1.30f, 1.50f, 2.00f
+        0.10f, 0.13f, 0.16f, 0.19f, 0.22f, 0.24f, 0.27f, 0.30f, 0.33f, 0.35f
     };
 
     /**

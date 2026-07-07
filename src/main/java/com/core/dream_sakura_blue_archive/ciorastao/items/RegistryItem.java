@@ -341,6 +341,7 @@ public class RegistryItem {
                             .stacksTo(1).
                             rarity(Rarity.EPIC)
             )
+                    .withHaloLevelSystem()
                     .withGlowIntensity(1f)
                     .withGlowColor(WHITE_GLOW)
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(

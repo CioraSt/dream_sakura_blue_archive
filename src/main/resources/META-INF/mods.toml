@@ -14,7 +14,7 @@ description = '''bbkb，所以又是为了王女吗？我也要玩我的世界�
 [[dependencies.dream_sakura_blue_archive]]
 modId = "dream_sakura"
 mandatory = true
-versionRange = "[0.1.0_fix,)"
+versionRange = "[0.0.9_fix,)"
 ordering = "NONE"
 side = "BOTH"
 

@@ -4,6 +4,7 @@ import com.core.dream_sakura.enums.DamageType;
 import com.core.dream_sakura_blue_archive.ciorastao.dream_sakura_blue_archive;
 import com.core.dream_sakura_blue_archive.ciorastao.effect.RegistryEffect;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloLevelManager;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloSkillRuntime;
 import com.core.dream_sakura_blue_archive.ciorastao.util.OtherHelper;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -88,6 +89,8 @@ public class DamageHandler {
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
 
+        HaloSkillRuntime.onServerTick(event.getServer());
+
         for (var serverLevel : event.getServer().getAllLevels()) {
             for (var player : serverLevel.players()) {
                 processHoshinoTactical(player);
@@ -169,20 +172,22 @@ public class DamageHandler {
     // ============================================================
 
     /**
-     * TXT 日奈被动1 10档: 20/60/120/180/260/400/500/561/720/888%
+     * DBA balanced passive1: 14%~45%.
      */
     private static final float[] HINA_P1_DAMAGE_BONUS = {
-        0.20f, 0.60f, 1.20f, 1.80f, 2.60f, 4.00f, 5.00f, 5.61f, 7.20f, 8.88f
+        0.14f, 0.17f, 0.21f, 0.24f, 0.28f, 0.31f, 0.35f, 0.39f, 0.42f, 0.45f
     };
     /**
-     * TXT 日奈被动3 10档: 8/16/24/32/40/50/75/90/120/150%
+     * DBA balanced passive3: 24%~80%.
      */
     private static final float[] HINA_P3_UNARMORED_BONUS = {
-        0.08f, 0.16f, 0.24f, 0.32f, 0.40f, 0.50f, 0.75f, 0.90f, 1.20f, 1.50f
+        0.24f, 0.30f, 0.37f, 0.43f, 0.50f, 0.56f, 0.62f, 0.69f, 0.74f, 0.80f
     };
 
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
+        HaloSkillRuntime.onLivingHurt(event);
+
         LivingEntity target = event.getEntity();
         DamageSource source = event.getSource();
 
@@ -347,6 +352,8 @@ public class DamageHandler {
 
     @SubscribeEvent
     public static void onLivingDamage(LivingDamageEvent event) {
+        HaloSkillRuntime.onLivingDamage(event);
+
         if (!(event.getEntity() instanceof Player player)) return;
 
         boolean isWearingHoshino = OtherHelper.getCuriosItem(player, "halo", HOSHINO_ID);

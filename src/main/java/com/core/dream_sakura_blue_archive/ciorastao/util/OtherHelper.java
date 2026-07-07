@@ -1,7 +1,9 @@
 package com.core.dream_sakura_blue_archive.ciorastao.util;
 
+import com.core.dream_sakura_blue_archive.ciorastao.items.DecorationItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -167,8 +169,7 @@ public class OtherHelper {
                     ItemStack stack = stacks.getStackInSlot(i);
 
                     if (!stack.isEmpty()) {
-
-                        if (ForgeRegistries.ITEMS.getKey(stack.getItem()).toString().equals(itemId)) {
+                        if (itemId.equals(getEffectiveRegistryId(stack))) {
                             return true;
                         }
                     }
@@ -176,6 +177,17 @@ public class OtherHelper {
             }
         }
         return hasTouhouMaidBaubleItem(entity, itemId);
+    }
+
+    private static String getEffectiveRegistryId(ItemStack stack) {
+        ResourceLocation registryId = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        if (registryId == null) {
+            return "";
+        }
+        if (stack.getItem() instanceof DecorationItem decorationItem) {
+            return registryId.getNamespace() + ":" + decorationItem.getEffectiveItemId(stack);
+        }
+        return registryId.toString();
     }
 
     public static boolean hasTouhouMaidBaubleItem(LivingEntity entity, String itemId) {
@@ -204,7 +216,7 @@ public class OtherHelper {
                 if (!(value instanceof ItemStack stack) || stack.isEmpty()) {
                     continue;
                 }
-                if (itemId.equals(String.valueOf(ForgeRegistries.ITEMS.getKey(stack.getItem())))) {
+                if (itemId.equals(getEffectiveRegistryId(stack))) {
                     return true;
                 }
             }

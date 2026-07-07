@@ -3,3 +3,15 @@
 # are changed when only line endings change.
 src/generated/**/.cache/cache text eol=lf
 src/generated/**/*.json text eol=lf
+*.java text eol=lf
+*.gradle text eol=lf
+*.properties text eol=lf
+*.json text eol=lf
+*.mcmeta text eol=lf
+*.toml text eol=lf
+*.cfg text eol=lf
+*.md text eol=lf
+*.bat text eol=crlf
+*.jar binary
+*.png binary
+*.xlsx binary

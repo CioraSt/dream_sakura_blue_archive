@@ -1,5 +1,5 @@
 {
-  "itemGroup.dream_sakura_blue_archive_ba_tab": "§bBA光环",
+  "itemGroup.dream_sakura_blue_archive_ba_tab": "光环",
   "itemGroup.dream_sakura_blue_archive_zax_tab": "§dBA经验书",
   "itemGroup.dream_sakura_blue_archive_zb_tab": "§eBA装备",
   "tooltip.dream_sakura_blue_archive.level": "等级：%s/ 90",
@@ -233,6 +233,10 @@
   "tooltip.dream_sakura.seia_swimsuit_halo.base": "§e兴趣爱好：冥想、占卜、喝红茶",
   "tooltip.dream_sakura.seia_swimsuit_halo.describe.line1": "§e\"我预见到了……今天会是个适合游泳的好天气。\"",
   "tooltip.dream_sakura.seia_swimsuit_halo.effect.line1": "§e（请输入文本）",
+  "item.dream_sakura_blue_archive.mika_halo": "§d圣园未花",
+  "tooltip.dream_sakura.mika_halo.base": "§d兴趣爱好：聊天、收集饰品",
+  "tooltip.dream_sakura.mika_halo.describe.line1": "§d\"老师，今天也要一起加油哦。\"",
+  "tooltip.dream_sakura.mika_halo.effect.line1": "§d（请输入文本）",
   "item.dream_sakura_blue_archive.natsu_halo": "§d柚鸟夏",
   "tooltip.dream_sakura.natsu_halo.base": "§d兴趣爱好：乐队活动、唱歌、吉他",
   "tooltip.dream_sakura.natsu_halo.describe.line1": "§d\"夏日就要尽情摇滚！来听我们的Live吧！\"",

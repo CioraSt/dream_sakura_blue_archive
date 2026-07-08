@@ -993,4 +993,10 @@ public class RegistryItem {
                     .build()
     );
 
+    // 圣园未花光环（OBJ模型）
+    public static final RegistryObject<Item> MIKA_HALO = ITEMS.register(
+            "mika_halo",
+            () -> new MikaObjHaloItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC))
+    );
+
 }

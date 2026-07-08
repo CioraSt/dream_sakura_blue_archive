@@ -1,0 +1,38 @@
+{
+  "loader": "forge:obj",
+  "model": "dream_sakura_blue_archive:models/obj/mika_halo.obj",
+  "flip-v": false,
+  "detectCullableFaces": false,
+  "diffuseLighting": false,
+  "textures": {
+    "mika_halo": "dream_sakura_blue_archive:item/mika_halo",
+    "particle": "dream_sakura_blue_archive:item/mika_halo"
+  },
+  "display": {
+    "gui": {
+      "rotation": [90, 0, 0],
+      "translation": [16.0, -16.0, 0],
+      "scale": [2.0, 2.0, 2.0]
+    },
+    "ground": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 18, 0],
+      "scale": [3, 3, 3]
+    },
+    "fixed": {
+      "rotation": [0, 0, 0],
+      "translation": [16, 16, 8],
+      "scale": [2.0, 2.0, 2.0]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, 0, 0],
+      "translation": [0, 16, 0],
+      "scale": [3, 3, 3]
+    },
+    "thirdperson_righthand": {
+      "rotation": [15, 0, 0],
+      "translation": [0, 32, 16],
+      "scale": [3, 3, 3]
+    }
+  }
+}

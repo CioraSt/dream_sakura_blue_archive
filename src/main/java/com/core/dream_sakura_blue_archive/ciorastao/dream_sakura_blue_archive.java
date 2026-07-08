@@ -2,8 +2,10 @@ package com.core.dream_sakura_blue_archive.ciorastao;
 
 import com.core.dream_sakura_blue_archive.ciorastao.effect.RegistryEffect;
 import com.core.dream_sakura_blue_archive.ciorastao.items.RegistryItem;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,10 +26,12 @@ import software.bernie.geckolib.GeckoLib;
 public class dream_sakura_blue_archive {
     public static final String MODID = "dream_sakura_blue_archive";
     public static final Logger LOGGER = LogManager.getLogger(dream_sakura_blue_archive.MODID); // 日志记录器
+    private static final ResourceKey<Registry<CreativeModeTab>> CREATIVE_MODE_TAB_REGISTRY =
+            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("minecraft", "creative_mode_tab"));
 
     // 注册创造物品栏
     //光环 tab
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(CREATIVE_MODE_TAB_REGISTRY, MODID);
     public static final RegistryObject<CreativeModeTab> DREAM_SAKURA_BA_TAB = CREATIVE_MODE_TABS.register("dream_sakura_ba_tab", () -> CreativeModeTab.builder()
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .title(Component.translatable("itemGroup.dream_sakura_blue_archive_ba_tab"))
@@ -72,6 +76,7 @@ public class dream_sakura_blue_archive {
                 output.accept(RegistryItem.MARI_GYM_HALO.get());            // 伊落玛丽（体操服）
                 output.accept(RegistryItem.SEIA_HALO.get());                // 圣园圣娅
                 output.accept(RegistryItem.SEIA_SWIMSUIT_HALO.get());       // 圣园圣娅（泳装）
+                output.accept(RegistryItem.MIKA_HALO.get());                // 圣园未花
                 output.accept(RegistryItem.NATSU_HALO.get());               // 柚鸟夏
                 output.accept(RegistryItem.NATSU_BAND_HALO.get());          // 柚鸟夏（乐队）
                 // === 山海经 ===
@@ -88,7 +93,7 @@ public class dream_sakura_blue_archive {
     );
 
     //杂项tab
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS1 = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS1 = DeferredRegister.create(CREATIVE_MODE_TAB_REGISTRY, MODID);
     public static final RegistryObject<CreativeModeTab> DREAM_SAKURA_ZAX_TAB = CREATIVE_MODE_TABS1.register("dream_sakura_zax_tab", () -> CreativeModeTab.builder()
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .title(Component.translatable("itemGroup.dream_sakura_blue_archive_zax_tab"))
@@ -103,7 +108,7 @@ public class dream_sakura_blue_archive {
     );
 
     //装备 tab
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS3 = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS3 = DeferredRegister.create(CREATIVE_MODE_TAB_REGISTRY, MODID);
     public static final RegistryObject<CreativeModeTab> DREAM_SAKURA_ZB_TAB = CREATIVE_MODE_TABS3.register("dream_sakura_zb_tab", () -> CreativeModeTab.builder()
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .title(Component.translatable("itemGroup.dream_sakura_blue_archive_zb_tab"))

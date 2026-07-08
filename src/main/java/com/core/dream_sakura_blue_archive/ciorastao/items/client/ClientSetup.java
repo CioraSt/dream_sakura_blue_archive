@@ -191,6 +191,10 @@ public class ClientSetup {
                 RegistryItem.MOMOI_MAID_HALO.get(),
                 () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
         );
+        CuriosRendererRegistry.register(
+                RegistryItem.MIKA_HALO.get(),
+                MikaObjCurioRenderer::new
+        );
     }
 
 

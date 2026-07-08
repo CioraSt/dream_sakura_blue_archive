@@ -144,9 +144,8 @@ public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
         poseStack.pushPose();
     }
 
-
     private ResourceLocation getGlowTextureResource(DecorationItem item) {
-        String itemId = item.getItemId();
+        String itemId = item.getGlowTextureId();
         String glowPath = "textures/item/glow/" + itemId + "_glow.png";
         
         return ResourceLocation.fromNamespaceAndPath(

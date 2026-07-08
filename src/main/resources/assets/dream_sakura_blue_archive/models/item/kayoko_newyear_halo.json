@@ -1,7 +1,7 @@
 {
   "parent": "builtin/entity",
   "textures": {
-    "particle": "dream_sakura_blue_archive:item/kayoko_newyear_halo_glow"
+    "particle": "dream_sakura_blue_archive:item/kayoko_halo_glow"
   },
   "display": {
     "gui": {

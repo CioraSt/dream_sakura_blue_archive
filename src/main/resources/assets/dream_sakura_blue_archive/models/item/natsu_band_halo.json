@@ -1,7 +1,7 @@
 {
   "parent": "builtin/entity",
   "textures": {
-    "particle": "dream_sakura_blue_archive:item/natsu_band_halo_glow"
+    "particle": "dream_sakura_blue_archive:item/natsu_halo_glow"
   },
   "display": {
     "gui": {

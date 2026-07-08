@@ -1,7 +1,7 @@
 {
   "parent": "builtin/entity",
   "textures": {
-    "particle": "dream_sakura_blue_archive:item/shirasuazusa_swimsuit_halo_glow"
+    "particle": "dream_sakura_blue_archive:item/shirasuazusa_halo_glow"
   },
   "display": {
     "gui": {

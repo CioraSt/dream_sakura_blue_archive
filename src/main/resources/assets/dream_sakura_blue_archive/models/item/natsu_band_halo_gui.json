@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "dream_sakura_blue_archive:item/natsu_band_halo_gui"
+    "layer0": "dream_sakura_blue_archive:item/natsu_halo_gui"
   }
 }

@@ -646,6 +646,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowIntensity(0.8f)
                     .withGlowColor(WHITE_GLOW)
+                    .withGlowTextureId("shiroko_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 3.5F, 2000.0F, 0xD0A2C2E1, 0xD0B0C4DE, 0xFF00BFFF, 0xFFF0F8FF,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/shiroko_cycling.png"},
@@ -665,6 +666,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowIntensity(0.8f)
                     .withGlowColor(WHITE_GLOW)
+                    .withGlowTextureId("shiroko_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 3.5F, 2000.0F, 0xD0A2C2E1, 0xD0B0C4DE, 0xFF00BFFF, 0xFFF0F8FF,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/shiroko_swimsuit.png"},
@@ -684,6 +686,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowColor(PINK_GLOW)
                     .withGlowIntensity(1f)
+                    .withGlowTextureId("hoshino_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 1.5F, 4000.0F, 0xD0FFB6C1, 0xD087CEEB, 0xFFFF69B4, 0xFF1E90FF,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/hoshino_swimsuit.png"},
@@ -703,6 +706,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowIntensity(1f)
                     .withGlowColor(PINK_GLOW)
+                    .withGlowTextureId("ayaneko_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 1.8F, 3000.0F, 0xD0FFE4E1, 0xD0FFB6C1, 0xFFFF69B4, 0xFFFF1493,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/ayane_swimsuit.png"},
@@ -760,6 +764,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowColor(ALS_GLOW)
                     .withGlowIntensity(0.8f)
+                    .withGlowTextureId("tendouaris_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 4.0F, 1500.0F, 0xD00A0A1A, 0xD04169E1, 0xFF00FFFF, 0xFFFFFFFF,
                             0.0F, -25.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/tendouaris_battle.png"},
@@ -779,6 +784,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowColor(ALS_GLOW)
                     .withGlowIntensity(0.8f)
+                    .withGlowTextureId("tendouaris_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 4.0F, 1500.0F, 0xD00A0A1A, 0xD04169E1, 0xFF00FFFF, 0xFFFFFFFF,
                             0.0F, -25.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/tendouaris_maid.png"},
@@ -798,6 +804,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowIntensity(0.8f)
                     .withGlowColor(WHITE_GLOW)
+                    .withGlowTextureId("shirasuazusa_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 3.0F, 2500.0F, 0xD0F0F8FF, 0xD0DDA0DD, 0xFFFFB6C1, 0xFFE6E6FA,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/shirasuazusa_swimsuit.png"},
@@ -817,6 +824,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowColor(GREY_GLOW)
                     .withGlowIntensity(1f)
+                    .withGlowTextureId("kayoko_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 2.0F, 3500.0F, 0xD01A1A40, 0xD0B0C4DE, 0xFF4169E1, 0xFF87CEEB,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/kayoko_newyear.png"},
@@ -836,6 +844,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowColor(YUZU_GLOW)
                     .withGlowIntensity(1f)
+                    .withGlowTextureId("yuzu_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 2.5F, 3000.0F, 0xD0333000, 0xD0FFA500, 0xFFFFD700, 0xFFFFF0B0,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/yuzu_battle.png"},
@@ -855,6 +864,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowColor(YUZU_GLOW)
                     .withGlowIntensity(1f)
+                    .withGlowTextureId("yuzu_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 2.5F, 3000.0F, 0xD0333000, 0xD0FFA500, 0xFFFFD700, 0xFFFFF0B0,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/yuzu_maid.png"},
@@ -874,6 +884,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowColor(NATSU_GLOW)
                     .withGlowIntensity(1f)
+                    .withGlowTextureId("natsu_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 2.5F, 3000.0F, 0xD02A1A20, 0xD0DB7093, 0xFFFF69B4, 0xFFFFB6C1,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/natsu_band.png"},
@@ -893,6 +904,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowColor(MARI_GLOW)
                     .withGlowIntensity(1f)
+                    .withGlowTextureId("mari_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 2.5F, 3000.0F, 0xD0332200, 0xD0B8860B, 0xFFFFD700, 0xFFFFFACD,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/mari_idol.png"},
@@ -912,6 +924,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowColor(MARI_GLOW)
                     .withGlowIntensity(1f)
+                    .withGlowTextureId("mari_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 2.5F, 3000.0F, 0xD0332200, 0xD0B8860B, 0xFFFFD700, 0xFFFFFACD,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/mari_gym.png"},
@@ -931,6 +944,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowColor(SEIA_GLOW)
                     .withGlowIntensity(1f)
+                    .withGlowTextureId("seia_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 2.5F, 3500.0F, 0xD0332A1A, 0xD0B8860B, 0xFFFFD700, 0xFFFFE4B5,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/seia_swimsuit.png"},
@@ -950,6 +964,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowColor(MIDORI_GLOW)
                     .withGlowIntensity(1f)
+                    .withGlowTextureId("midori_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 2.5F, 3000.0F, 0xD01A3020, 0xD0228B22, 0xFF7CFC00, 0xFFADFF2F,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/midori_maid.png"},
@@ -969,6 +984,7 @@ public class RegistryItem {
                     .withBAElementsParticles()
                     .withGlowColor(MOMOI_GLOW)
                     .withGlowIntensity(1f)
+                    .withGlowTextureId("momoi_halo")
                     .withTooltipTextureConfig(new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
                             192, 192, 2.5F, 3000.0F, 0xD02A1515, 0xD0FF69B4, 0xFFFF69B4, 0xFFFFC0CB,
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/momoi_maid.png"},
@@ -976,4 +992,5 @@ public class RegistryItem {
                     ))
                     .build()
     );
+
 }

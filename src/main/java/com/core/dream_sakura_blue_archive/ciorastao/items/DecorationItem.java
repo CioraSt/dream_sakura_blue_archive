@@ -61,6 +61,7 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
     private final BiConsumer<SlotContext, ItemStack> curioEquipCallback; // 装备时的tick回调函数
     private final float[] glowColor; // 发光颜色
     private final Float glowIntensity; // 发光强度
+    private final String glowTextureId; // 发光贴图ID，用于同素材分支复用
     private final List<Integer> tooltipColor; // 工具提示颜色列表
     private final String tooltipText; // 工具提示文本
     private final String tooltipTranslationKey; // 工具提示翻译键
@@ -86,6 +87,7 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
         this.immunityProvider = builder.immunityProvider;
         this.glowColor = builder.glowColor != null ? builder.glowColor : new float[]{1.0f, 0.84f, 0.0f};
         this.glowIntensity = builder.glowIntensity != null ? builder.glowIntensity : 1.0f;
+        this.glowTextureId = builder.glowTextureId != null ? builder.glowTextureId : builder.itemId;
         this.tooltipColor = builder.tooltipColor != null ? builder.tooltipColor : Collections.emptyList();
         this.tooltipText = builder.tooltipText;
         this.tooltipTranslationKey = builder.tooltipTranslationKey;
@@ -392,6 +394,10 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
     public String getItemId() {
         return itemId;
     }
+
+    public String getGlowTextureId() {
+        return glowTextureId;
+    }
     //#endregion
 
 
@@ -658,6 +664,7 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
         private Function<ItemStack, Set<DamageType>> immunityProvider = stack -> Collections.emptySet();
         private float[] glowColor = null;
         private Float glowIntensity = 1.0f;
+        private String glowTextureId = null;
         private List<Integer> tooltipColor = null;
         private String tooltipText = null;
         private String tooltipTranslationKey = null;
@@ -714,6 +721,11 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
 
         public Builder withGlowIntensity(float glowIntensity) {
             this.glowIntensity = glowIntensity;
+            return this;
+        }
+
+        public Builder withGlowTextureId(String glowTextureId) {
+            this.glowTextureId = glowTextureId;
             return this;
         }
 

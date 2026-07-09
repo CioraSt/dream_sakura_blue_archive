@@ -30,8 +30,8 @@ public class MikaObjCurioRenderer implements ICurioRenderer {
             float headPitch
     ) {
         matrixStack.pushPose();
-        matrixStack.translate(1.0D, 0.7D, 0.8D);
-        matrixStack.mulPose(Axis.XP.rotationDegrees(-30.0F));
+        matrixStack.translate(1.0D, -2D, 0D);
+        matrixStack.mulPose(Axis.XP.rotationDegrees(150.0F));
         matrixStack.scale(2.0F, 2.0F, 2.0F);
         Minecraft.getInstance().getItemRenderer().renderStatic(
                 stack,

@@ -1,8 +1,8 @@
 package com.core.dream_sakura_blue_archive.ciorastao.items;
 
 import com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI;
-import com.core.dream_sakura.tooltip.TooltipHelper;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloLevelManager;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloTooltipText;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.Item;
@@ -14,7 +14,6 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
 
 public class MikaObjHaloItem extends Item implements ICurioItem {
@@ -64,7 +63,7 @@ public class MikaObjHaloItem extends Item implements ICurioItem {
                     .withStyle(Style.EMPTY.withColor(0xADD8E6)));
         }
         if (level != null && level.isClientSide()) {
-            TooltipHelper.addTooltip(ITEM_ID, stack, level, tooltip, flag, Collections.emptyList(), true, true);
+            HaloTooltipText.addHaloTooltip(ITEM_ID, tooltip);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.core.dream_sakura_blue_archive.ciorastao.items.client;
 
 import com.core.dream_sakura_blue_archive.ciorastao.dream_sakura_blue_archive;
 import com.core.dream_sakura_blue_archive.ciorastao.items.DecorationItem;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloVariantHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -60,7 +61,7 @@ public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
                 // 根据显示上下文决定渲染顺序：第一人称时先渲染发光层，其他情况后渲染
                 if (transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || transformType == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) {
                     // 第一人称视角：先渲染发光层
-                    renderGlowLayer(stack, transformType, poseStack, bufferSource, packedLight, packedOverlay, item);
+                renderGlowLayer(stack, transformType, poseStack, bufferSource, packedLight, packedOverlay, item);
                     // 再进行基础渲染
                     super.renderByItem(stack, transformType, poseStack, bufferSource, packedLight, packedOverlay);
                 } else {
@@ -100,7 +101,7 @@ public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
             DecorationItem item
     ) {
         // 获取发光纹理资源，如果为null则直接返回
-        ResourceLocation glowTexture = getGlowTextureResource(item);
+        ResourceLocation glowTexture = getGlowTextureResource(stack, item);
         if (glowTexture == null) return;
 
         // 获取发光颜色和强度
@@ -112,7 +113,7 @@ public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
         VertexConsumer glowBuffer = bufferSource.getBuffer(glowRenderType);
 
         // 获取烘焙的几何模型
-        BakedGeoModel model = this.getGeoModel().getBakedModel(this.getGeoModel().getModelResource(item));
+        BakedGeoModel model = this.getGeoModel().getBakedModel(this.getGeoModel().getModelResource(item, this));
 
         try {
             // 将模型偏移到中心位置并略微上移
@@ -144,8 +145,13 @@ public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
         poseStack.pushPose();
     }
 
-    private ResourceLocation getGlowTextureResource(DecorationItem item) {
-        String itemId = item.getGlowTextureId();
+    private ResourceLocation getGlowTextureResource(ItemStack stack, DecorationItem item) {
+        String itemId = item.getEffectiveItemId(stack);
+        if (itemId.equals(item.getItemId())) {
+            itemId = item.getGlowTextureId();
+        } else {
+            itemId = HaloVariantHelper.baseItemId(itemId);
+        }
         String glowPath = "textures/item/glow/" + itemId + "_glow.png";
         
         return ResourceLocation.fromNamespaceAndPath(

@@ -8,10 +8,11 @@ import com.core.dream_sakura.enums.DamageType;
 import com.core.dream_sakura.listener.IDamageImmunity;
 import com.core.dream_sakura.skill.SkillBinding;
 import com.core.dream_sakura.skill.SkillRegistry;
-import com.core.dream_sakura.tooltip.TooltipHelper;
 import com.core.dream_sakura_blue_archive.ciorastao.items.client.DecorationRenderer;
 import com.core.dream_sakura_blue_archive.ciorastao.items.client.IGlowingItem;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloLevelManager;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloTooltipText;
+import com.core.dream_sakura_blue_archive.ciorastao.util.HaloVariantHelper;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -300,7 +301,6 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
                     ).withStyle(Style.EMPTY.withColor(0xFF00FF))
             );
 
-            // 只有在达到 90 级且经验值已满时才显示 MAX，否则显示正常经验值
             if (itemLevel >= 90 && itemXp >= itemMaxXp) {
                 tooltip.add(
                         Component.translatable(
@@ -323,25 +323,18 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
             tooltip.add(Component.literal(this.tooltipText));
         }
 
-        // 添加Shift/Ctrl详细描述（使用前置模组的TooltipHelper）
+        // 添加光环描述文本。
         if (level != null && level.isClientSide() && this.itemId != null) {
-            TooltipHelper.addTooltip(
-                    this.itemId,
-                    stack,
-                    level,
-                    tooltip,
-                    flag,
-                    this.tooltipColor,
-                    this.enableShiftPrompt,
-                    this.enableCtrlPrompt
-            );
+            String effectiveItemId = getEffectiveItemId(stack);
+            HaloTooltipText.addHaloTooltip(effectiveItemId, tooltip);
         }
 
         if (this.skillBinding != null) {
-            TooltipHelper.addSkillsDescription(
-                    tooltip,
-                    this.skillBinding.getDescription(),
-                    this.skillBinding.getkeyMapping().getKey().getName()
+            String effectiveItemId = getEffectiveItemId(stack);
+            HaloTooltipText.addSkillKey(
+                    effectiveItemId + "_skill",
+                    this.skillBinding.getkeyMapping().getKey().getName(),
+                    tooltip
             );
         }
 
@@ -397,6 +390,15 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
 
     public String getGlowTextureId() {
         return glowTextureId;
+    }
+
+    public String getEffectiveItemId(ItemStack stack) {
+        return HaloVariantHelper.effectiveItemId(stack, this.itemId);
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        return Component.translatable("item.dream_sakura_blue_archive." + getEffectiveItemId(stack));
     }
     //#endregion
 
@@ -693,7 +695,9 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
          * @return - Builder实例
          */
         public Builder withCurioEquipCallback(BiConsumer<SlotContext, ItemStack> callback) {
-            this.curioEquipCallback = callback;
+            if (callback != null) {
+                this.curioEquipCallback = this.curioEquipCallback.andThen(callback);
+            }
             return this;
         }
 

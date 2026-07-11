@@ -202,8 +202,6 @@ dependencies {
     compileOnly fg.deobf("curse.maven:jade-324717:6855440")
     runtimeOnly fg.deobf("curse.maven:jade-324717:6855440")
     implementation("com.eliotlash.mclib:mclib:20")
-    // 运行时使用 KosmX's Player Animations
-    implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_animation_version}")
     // 运行时使用 神化前置
 //    //jei
 //    implementation fg.deobf("curse.maven:dream-sakura-1513524:7929135")
@@ -258,8 +256,9 @@ dependencies {
     // 对应 ./libs/coolmod-${mc_version}-${coolmod_version}.jar
     // 搜索时忽略 group id，此处为 "blank"
     // implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
-    implementation fg.deobf("curse.maven:epic-core-api-977556:8189418")
-    implementation fg.deobf("blank:dream_sakura-0.1.0_fix:0.1.0")
+    implementation fg.deobf("curse.maven:endinglibrary-1471165:8292038")
+    implementation fg.deobf("curse.maven:epic-core-api-977556:8404586")
+    implementation fg.deobf("blank:dream_sakura-0.1.1_fix:0.1.1")
 
     // 更多信息：
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html

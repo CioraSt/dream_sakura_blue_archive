@@ -64,6 +64,10 @@ public final class HaloVariantHelper {
         return baseItemId(fallbackItemId).equals(baseItemId(requestedItemId));
     }
 
+    public static java.util.Collection<String> allVariantIds() {
+        return BASE_BY_VARIANT.keySet();
+    }
+
     private HaloVariantHelper() {
     }
 }

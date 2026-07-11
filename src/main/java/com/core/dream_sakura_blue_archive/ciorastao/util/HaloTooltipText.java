@@ -7,7 +7,7 @@ import java.util.List;
 
 public final class HaloTooltipText {
     private static final String PREFIX = "tooltip.dream_sakura.";
-    private static final int MAX_LINE_COUNT = 20;
+    public static final int MAX_LINE_COUNT = 20;
 
     private HaloTooltipText() {
     }

@@ -14,7 +14,7 @@ description = '''bbkb，所以又是为了王女吗？我也要玩我的世界�
 [[dependencies.dream_sakura_blue_archive]]
 modId = "dream_sakura"
 mandatory = true
-versionRange = "[0.1.0_fix,)"
+versionRange = "[0.1.1_fix,)"
 ordering = "NONE"
 side = "BOTH"
 
@@ -36,12 +36,5 @@ side = "BOTH"
     modId="geckolib" # 基岩版动画库
     mandatory=true
     versionRange="[4.7.1,)"
-    ordering="NONE"
-    side="BOTH"
-
-[[dependencies.dream_sakura_blue_archive]]
-    modId="playeranimator" # 玩家动画库
-mandatory = true
-    versionRange="[1.0.2-rc1+1.20,)"
     ordering="NONE"
     side="BOTH"

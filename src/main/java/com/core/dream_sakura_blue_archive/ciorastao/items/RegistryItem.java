@@ -1,10 +1,12 @@
 package com.core.dream_sakura_blue_archive.ciorastao.items;
 
 import com.core.dream_sakura_blue_archive.ciorastao.dream_sakura_blue_archive;
+import com.core.dream_sakura_blue_archive.ciorastao.entity.RegistryEntity;
 import com.core.dream_sakura_blue_archive.ciorastao.util.RegistryActiveSkill;
 import com.core.dream_sakura_blue_archive.ciorastao.util.RegistryPassiveSkill;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -12,6 +14,19 @@ import net.minecraftforge.registries.RegistryObject;
 public class RegistryItem {
     // 创建注册器
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, dream_sakura_blue_archive.MODID);
+
+    public static final RegistryObject<Item> PYROXENE = ITEMS.register(
+            "pyroxene",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.RARE)
+                    .stacksTo(64)
+                    .fireResistant())
+    );
+
+    public static final RegistryObject<Item> ARONA_SPAWN_EGG = ITEMS.register(
+            "arona_spawn_egg",
+            () -> new ForgeSpawnEggItem(RegistryEntity.ARONA, 0x4A90E2, 0xFFFFFF, new Item.Properties())
+    );
 
     // 仅供梦樱 API 侧边分类栏绘制学院校徽，不加入创造物品列表。
     public static final RegistryObject<Item> CATEGORY_ABYDOS = categoryIcon("category_abydos");

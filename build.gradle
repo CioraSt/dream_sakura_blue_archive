@@ -150,6 +150,9 @@ repositories {
 
     // 如果你有 mod jar 依赖放在 ./libs，可以像下面这样声明仓库。
     // 详见：https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
+    maven {
+        url = uri('local-maven')
+    }
     flatDir {
         dir 'libs'
     }
@@ -257,7 +260,7 @@ dependencies {
     // 搜索时忽略 group id，此处为 "blank"
     // implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
     implementation fg.deobf("curse.maven:endinglibrary-1471165:8292038")
-    implementation fg.deobf("curse.maven:epic-core-api-977556:8404586")
+    implementation fg.deobf("maven.modrinth:epic-core-api:1.1.6-fix-fix")
     implementation fg.deobf("blank:dream_sakura-0.1.1_fix:0.1.1")
 
     // 更多信息：

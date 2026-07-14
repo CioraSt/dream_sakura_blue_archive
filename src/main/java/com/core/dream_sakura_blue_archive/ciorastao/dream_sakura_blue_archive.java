@@ -42,6 +42,7 @@ public class dream_sakura_blue_archive {
                 acceptHalo(output, RegistryItem.HINA_HALO, "hina_dress_halo", "hina_swimsuit_halo");
                 acceptHalo(output, RegistryItem.KAYOKO_HALO, "kayoko_newyear_halo");
                 acceptHalo(output, RegistryItem.TENDOUARIS_HALO, "tendouaris_battle_halo", "tendouaris_maid_halo");
+                output.accept(RegistryItem.TENDOUARIS_SWORD_OF_LIGHT.get());
                 acceptHalo(output, RegistryItem.YUZU_HALO, "yuzu_battle_halo", "yuzu_maid_halo");
                 acceptHalo(output, RegistryItem.MOMOI_HALO, "momoi_maid_halo");
                 acceptHalo(output, RegistryItem.MIDORI_HALO, "midori_maid_halo");

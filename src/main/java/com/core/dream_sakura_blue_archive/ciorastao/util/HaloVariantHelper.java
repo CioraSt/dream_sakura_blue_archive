@@ -1,5 +1,6 @@
 package com.core.dream_sakura_blue_archive.ciorastao.util;
 
+import com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -66,6 +67,56 @@ public final class HaloVariantHelper {
 
     public static java.util.Collection<String> allVariantIds() {
         return BASE_BY_VARIANT.keySet();
+    }
+
+    public static void registerVariantTooltips(String baseItemId, DreamSakuraTooltipAPI.DreamSakuraTextureConfig baseConfig) {
+        for (Map.Entry<String, String> entry : BASE_BY_VARIANT.entrySet()) {
+            if (!baseItemId.equals(entry.getValue())) {
+                continue;
+            }
+            String variantId = entry.getKey();
+            int[] size = portraitSize(variantId);
+            DreamSakuraTooltipAPI.registerHaloTooltip(variantId, copyWithPortrait(baseConfig, variantId, size[0], size[1]));
+        }
+    }
+
+    private static int[] portraitSize(String variantId) {
+        return switch (variantId) {
+            case "shiroko_cycling_halo" -> new int[]{764, 1019};
+            case "shiroko_swimsuit_halo" -> new int[]{547, 1525};
+            case "hoshino_swimsuit_halo" -> new int[]{866, 1092};
+            case "ayane_swimsuit_halo" -> new int[]{1094, 1319};
+            case "hina_dress_halo" -> new int[]{973, 1298};
+            case "hina_swimsuit_halo" -> new int[]{692, 1111};
+            case "tendouaris_battle_halo" -> new int[]{1105, 1300};
+            case "tendouaris_maid_halo" -> new int[]{770, 1190};
+            case "shirasuazusa_swimsuit_halo" -> new int[]{978, 1196};
+            case "kayoko_newyear_halo" -> new int[]{331, 1291};
+            case "yuzu_battle_halo" -> new int[]{591, 1300};
+            case "yuzu_maid_halo" -> new int[]{648, 1080};
+            case "natsu_band_halo" -> new int[]{432, 1239};
+            case "mari_idol_halo" -> new int[]{514, 1310};
+            case "mari_gym_halo" -> new int[]{842, 1303};
+            case "seia_swimsuit_halo" -> new int[]{656, 1400};
+            case "midori_maid_halo" -> new int[]{704, 1058};
+            case "momoi_maid_halo" -> new int[]{877, 1236};
+            default -> new int[]{64, 64};
+        };
+    }
+
+    private static DreamSakuraTooltipAPI.DreamSakuraTextureConfig copyWithPortrait(
+            DreamSakuraTooltipAPI.DreamSakuraTextureConfig config, String variantId, int width, int height) {
+        String portraitId = variantId.substring(0, variantId.length() - "_halo".length());
+        return new DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
+                config.maxWidth, config.maxHeight, config.floatAmplitude, config.floatPeriod,
+                config.backgroundStart, config.backgroundEnd, config.borderStart, config.borderEnd,
+                config.mainTextureOffsetX, config.mainTextureOffsetY, config.enableFoxBladeEffect,
+                new String[]{"dream_sakura_blue_archive:textures/screens/" + portraitId + ".png"},
+                new int[]{width}, new int[]{height}, config.foxBladeMaxWidth, config.foxBladeMaxHeight,
+                config.foxBladeCenterOffsetX, config.foxBladeCenterOffsetY, config.foxBladeOrbitRadius,
+                config.foxBladeAlpha, config.foxBladeRotationSpeed, config.foxBladeLayerCount,
+                config.textureSwapInterval, config.swapWithMainTexture, config.foxBladeUseIndependentTextures
+        );
     }
 
     private HaloVariantHelper() {

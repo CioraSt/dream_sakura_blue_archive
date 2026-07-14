@@ -18,7 +18,7 @@ public final class HaloSchoolHelper {
             "hoshino_halo", "hoshino_swimsuit_halo",
             "serlka_halo", "nonomi_halo",
             "ayaneko_halo", "ayane_swimsuit_halo",
-            "yume_halo"
+            "yume_halo", "kuroko_halo"
     );
 
     // 格黑娜学园
@@ -50,6 +50,21 @@ public final class HaloSchoolHelper {
             "shun_halo", "karena_halo"
     );
 
+    // 海兰德铁道学院
+    private static final Set<String> HIGHLANDER = Set.of(
+            "juguang_halo", "juwang_halo"
+    );
+
+    // 联邦学生会
+    private static final Set<String> FEDERAL = Set.of(
+            "ren_halo"
+    );
+
+    // 非《碧蓝档案》原创角色
+    private static final Set<String> OTHER = Set.of(
+            "kluonuoya_halo", "sakuluna_halo"
+    );
+
     private static final String MODID = dream_sakura_blue_archive.MODID;
 
     private HaloSchoolHelper() {
@@ -60,12 +75,14 @@ public final class HaloSchoolHelper {
         CreativeCategoryRegistry.showAllWhenNoneSelected = true;
 
         // 学院分类
-        fromPath("阿比多斯", RegistryItem.SHIROKO_HALO.get(), id -> ABYDOS.contains(id));
-        fromPath("格黑娜", RegistryItem.HINA_HALO.get(), id -> GEHENNA.contains(id));
-        fromPath("千禧年", RegistryItem.TENDOUARIS_HALO.get(), id -> MILLENNIUM.contains(id));
-        fromPath("三一", RegistryItem.SHIRASUAZUSA_HALO.get(), id -> TRINITY.contains(id));
-        fromPath("山海经", RegistryItem.SHUN_HALO.get(), id -> SHANHAIJING.contains(id));
-        fromPath("其他光环", RegistryItem.KUROKO_HALO.get(), HaloSchoolHelper::filterOthers);
+        fromPath("阿比多斯", RegistryItem.CATEGORY_ABYDOS.get(), ABYDOS::contains);
+        fromPath("格黑娜", RegistryItem.CATEGORY_GEHENNA.get(), GEHENNA::contains);
+        fromPath("千禧年", RegistryItem.CATEGORY_MILLENNIUM.get(), MILLENNIUM::contains);
+        fromPath("三一", RegistryItem.CATEGORY_TRINITY.get(), TRINITY::contains);
+        fromPath("山海经", RegistryItem.CATEGORY_SHANHAIJING.get(), SHANHAIJING::contains);
+        fromPath("海兰德铁道", RegistryItem.CATEGORY_HIGHLANDER.get(), HIGHLANDER::contains);
+        fromPath("联邦学生会", RegistryItem.CATEGORY_FEDERAL.get(), FEDERAL::contains);
+        fromPath("其他", RegistryItem.SAKULUNA_HALO.get(), OTHER::contains);
 
         // 其他物品分类
         fromStack("经验书", RegistryItem.SUPERIOR_EXP.get(), stack -> {
@@ -95,12 +112,6 @@ public final class HaloSchoolHelper {
                 new ItemStack(icon),
                 predicate
         );
-    }
-
-    private static boolean filterOthers(String id) {
-        return id.endsWith("_halo")
-                && !ABYDOS.contains(id) && !GEHENNA.contains(id) && !MILLENNIUM.contains(id)
-                && !TRINITY.contains(id) && !SHANHAIJING.contains(id);
     }
 
     private static String getItemPath(ItemStack stack) {

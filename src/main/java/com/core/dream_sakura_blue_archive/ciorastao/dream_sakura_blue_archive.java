@@ -1,7 +1,10 @@
 package com.core.dream_sakura_blue_archive.ciorastao;
 
 import com.core.dream_sakura_blue_archive.ciorastao.effect.RegistryEffect;
+import com.core.dream_sakura_blue_archive.ciorastao.entity.RegistryEntity;
 import com.core.dream_sakura_blue_archive.ciorastao.items.RegistryItem;
+import com.core.dream_sakura_blue_archive.ciorastao.menu.RegistryMenu;
+import com.core.dream_sakura_blue_archive.ciorastao.network.NetworkHandler;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloSchoolHelper;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloVariantHelper;
 import net.minecraft.core.Registry;
@@ -35,8 +38,12 @@ public class dream_sakura_blue_archive {
             .title(Component.translatable("itemGroup.dream_sakura_blue_archive_ba_tab"))
             .icon(() -> RegistryItem.TENDOUARIS_HALO.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
+                output.accept(RegistryItem.PYROXENE.get());
+                output.accept(RegistryItem.ARONA_SPAWN_EGG.get());
                 for (var entry : ForgeRegistries.ITEMS.getEntries()) {
-                    if (!MODID.equals(entry.getKey().location().getNamespace())) continue;
+                    if (!MODID.equals(entry.getKey().location().getNamespace())
+                            || entry.getValue() == RegistryItem.PYROXENE.get()
+                            || entry.getValue() == RegistryItem.ARONA_SPAWN_EGG.get()) continue;
                     output.accept(entry.getValue());
                 }
                 // NBT 变体（紧跟在对应基础物品后面）
@@ -57,8 +64,11 @@ public class dream_sakura_blue_archive {
         CREATIVE_MODE_TABS.register(modEventBus);
         RegistryItem.ITEMS.register(modEventBus);
         RegistryEffect.EFFECTS.register(modEventBus);
+        RegistryEntity.ENTITY_TYPES.register(modEventBus);
+        RegistryMenu.MENUS.register(modEventBus);
         MinecraftForge.EVENT_BUS.register(this);
         GeckoLib.initialize();
+        NetworkHandler.register();
 
         // 注册梦樱API分类栏（需在注册完成后执行）
         modEventBus.addListener(this::onClientSetup);

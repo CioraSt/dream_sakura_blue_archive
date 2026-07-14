@@ -3,6 +3,7 @@ package com.core.dream_sakura_blue_archive.ciorastao.items;
 import com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloLevelManager;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloTooltipText;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.Item;
@@ -63,7 +64,16 @@ public class MikaObjHaloItem extends Item implements ICurioItem {
                     .withStyle(Style.EMPTY.withColor(0xADD8E6)));
         }
         if (level != null && level.isClientSide()) {
-            HaloTooltipText.addHaloTooltip(ITEM_ID, tooltip);
+            if (Screen.hasShiftDown()) {
+                HaloTooltipText.addCharacterTooltip(ITEM_ID, tooltip);
+            } else {
+                HaloTooltipText.addPrompt(ITEM_ID, "tooltip.dream_sakura_blue_archive.shift_prompt", tooltip);
+            }
+            if (Screen.hasControlDown()) {
+                HaloTooltipText.addSkillTooltip(ITEM_ID, tooltip);
+            } else {
+                HaloTooltipText.addPrompt(ITEM_ID, "tooltip.dream_sakura_blue_archive.ctrl_prompt", tooltip);
+            }
         }
     }
 }

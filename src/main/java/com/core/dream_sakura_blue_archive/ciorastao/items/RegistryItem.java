@@ -13,6 +13,19 @@ public class RegistryItem {
     // 创建注册器
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, dream_sakura_blue_archive.MODID);
 
+    // 仅供梦樱 API 侧边分类栏绘制学院校徽，不加入创造物品列表。
+    public static final RegistryObject<Item> CATEGORY_ABYDOS = categoryIcon("category_abydos");
+    public static final RegistryObject<Item> CATEGORY_GEHENNA = categoryIcon("category_gehenna");
+    public static final RegistryObject<Item> CATEGORY_MILLENNIUM = categoryIcon("category_millennium");
+    public static final RegistryObject<Item> CATEGORY_TRINITY = categoryIcon("category_trinity");
+    public static final RegistryObject<Item> CATEGORY_SHANHAIJING = categoryIcon("category_shanhaijing");
+    public static final RegistryObject<Item> CATEGORY_HIGHLANDER = categoryIcon("category_highlander");
+    public static final RegistryObject<Item> CATEGORY_FEDERAL = categoryIcon("category_federal");
+
+    private static RegistryObject<Item> categoryIcon(String id) {
+        return ITEMS.register(id, () -> new Item(new Item.Properties()));
+    }
+
     // #region 经验材料
     public static final RegistryObject<Item> PRIMARY_EXP = ITEMS.register(
             "primary_exp",

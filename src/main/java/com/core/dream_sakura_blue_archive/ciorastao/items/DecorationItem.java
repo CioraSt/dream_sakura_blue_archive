@@ -17,6 +17,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -112,6 +113,7 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
         // 注册Tooltip纹理配置
         if (this.tooltipTextureConfig != null && this.itemId != null) {
             DreamSakuraTooltipAPI.registerHaloTooltip(this.itemId, this.tooltipTextureConfig);
+            HaloVariantHelper.registerVariantTooltips(this.itemId, this.tooltipTextureConfig);
         }
     }
     //#endregion
@@ -323,19 +325,27 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
             tooltip.add(Component.literal(this.tooltipText));
         }
 
-        // 添加光环描述文本。
+        // 保持添加未花时的原版顺序：Shift 展开角色设定，Ctrl 展开技能详情。
         if (level != null && level.isClientSide() && this.itemId != null) {
             String effectiveItemId = getEffectiveItemId(stack);
-            HaloTooltipText.addHaloTooltip(effectiveItemId, tooltip);
-        }
-
-        if (this.skillBinding != null) {
-            String effectiveItemId = getEffectiveItemId(stack);
-            HaloTooltipText.addSkillKey(
-                    effectiveItemId + "_skill",
-                    this.skillBinding.getkeyMapping().getKey().getName(),
-                    tooltip
-            );
+            if (Screen.hasShiftDown()) {
+                HaloTooltipText.addCharacterTooltip(effectiveItemId, tooltip);
+            } else if (this.enableShiftPrompt) {
+                HaloTooltipText.addPrompt(effectiveItemId, "tooltip.dream_sakura_blue_archive.shift_prompt", tooltip);
+            }
+            if (Screen.hasControlDown()) {
+                HaloTooltipText.addSkillTooltip(effectiveItemId, tooltip);
+            } else if (this.enableCtrlPrompt) {
+                HaloTooltipText.addPrompt(effectiveItemId, "tooltip.dream_sakura_blue_archive.ctrl_prompt", tooltip);
+            }
+            if (this.skillBinding != null) {
+                HaloTooltipText.addSkillKey(
+                        effectiveItemId,
+                        this.itemId + "_skill",
+                        this.skillBinding.getkeyMapping().getTranslatedKeyMessage(),
+                        tooltip
+                );
+            }
         }
 
 

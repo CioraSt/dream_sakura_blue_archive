@@ -54,7 +54,7 @@ public class RegistryItem {
     // 天童爱丽丝的“光之剑”。仅注册普通物品，不附加武器属性。
     public static final RegistryObject<Item> TENDOUARIS_SWORD_OF_LIGHT = ITEMS.register(
             "tendouaris_sword_of_light",
-            () -> new Item(new Item.Properties())
+            () -> new SwordOfLightItem(new Item.Properties())
     );
     // 定义发光颜色
     private static final float[] NULL_GLOW = {}; // 无色

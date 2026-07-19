@@ -1,0 +1,11 @@
+{
+  "loader": "forge:obj",
+  "model": "dream_sakura_blue_archive:models/obj/tendouaris_sword_of_light_right_upper_small.obj",
+  "flip_v": true,
+  "detectCullableFaces": false,
+  "diffuseLighting": true,
+  "textures": {
+    "sword_of_light": "dream_sakura_blue_archive:item/tendouaris_sword_of_light",
+    "particle": "dream_sakura_blue_archive:item/tendouaris_sword_of_light"
+  }
+}

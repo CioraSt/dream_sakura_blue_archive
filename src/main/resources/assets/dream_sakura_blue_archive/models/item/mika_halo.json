@@ -5,34 +5,94 @@
   "detectCullableFaces": false,
   "diffuseLighting": false,
   "textures": {
-    "mika_halo": "dream_sakura_blue_archive:item/mika_halo",
-    "particle": "dream_sakura_blue_archive:item/mika_halo"
+    "mika_halo": "dream_sakura_blue_archive:item/mika_halo_uv",
+    "particle": "dream_sakura_blue_archive:item/mika_halo_uv"
   },
   "display": {
     "gui": {
-      "rotation": [90, 0, 0],
-      "translation": [16, -16, 0],
-      "scale": [2, 2, 2]
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "translation": [
+        16,
+        -16,
+        0
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ]
     },
     "ground": {
-      "rotation": [25, 0, 0],
-      "translation": [24, 8, 32],
-      "scale": [3, 3, 3]
+      "rotation": [
+        25,
+        0,
+        0
+      ],
+      "translation": [
+        24,
+        8,
+        32
+      ],
+      "scale": [
+        3,
+        3,
+        3
+      ]
     },
     "fixed": {
-      "rotation": [0, 0, 0],
-      "translation": [16, 16, 8],
-      "scale": [2.0, 2.0, 2.0]
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        16,
+        16,
+        8
+      ],
+      "scale": [
+        2.0,
+        2.0,
+        2.0
+      ]
     },
     "firstperson_righthand": {
-      "rotation": [25, 0, 10],
-      "translation": [32, 16, 15],
-      "scale": [3, 3, 3]
+      "rotation": [
+        25,
+        0,
+        10
+      ],
+      "translation": [
+        32,
+        16,
+        15
+      ],
+      "scale": [
+        3,
+        3,
+        3
+      ]
     },
     "thirdperson_righthand": {
-      "rotation": [25, 0, 0],
-      "translation": [24, 16, 32],
-      "scale": [3, 3, 3]
+      "rotation": [
+        25,
+        0,
+        0
+      ],
+      "translation": [
+        24,
+        16,
+        32
+      ],
+      "scale": [
+        3,
+        3,
+        3
+      ]
     }
   }
 }

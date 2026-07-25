@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "dream_sakura_blue_archive:item/sakuluna_halo_gui"
+    "layer0": "dream_sakura_blue_archive:item/glow/sakuluna_halo_glow"
   }
 }

@@ -12,6 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.cache.object.GeoCube;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
 import javax.annotation.Nullable;
@@ -108,41 +110,82 @@ public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
         float[] glowColor = item.getGlowColor();
         float glowIntensity = item.getGlowIntensity();
 
-        // 创建发光渲染类型并获取对应的顶点缓冲区
-        RenderType glowRenderType = Renders.HALO_TYPT_NC.apply(glowTexture);
-        VertexConsumer glowBuffer = bufferSource.getBuffer(glowRenderType);
-
         // 获取烘焙的几何模型
         BakedGeoModel model = this.getGeoModel().getBakedModel(this.getGeoModel().getModelResource(item, this));
 
+        poseStack.pushPose();
         try {
             // 将模型偏移到中心位置并略微上移
             poseStack.translate(0.5, 0.5 + 0.01, 0.5); //偏移
-            float scaleFactor = 1.0f;
-            // 应用缩放变换
-            poseStack.scale(scaleFactor, scaleFactor, scaleFactor); // 缩放
-            // 重新渲染模型，应用发光效果
-            this.reRender(
-                    model,
-                    poseStack,
-                    bufferSource,
-                    item,
-                    glowRenderType,
-                    glowBuffer,
-                    0,
-                    packedLight,
-                    OverlayTexture.NO_OVERLAY,
-                    glowColor[0] * glowIntensity,
-                    glowColor[1] * glowIntensity,
-                    glowColor[2] * glowIntensity,
-                    1
-            );
+            boolean planarHalo = isSinglePlaneModel(model);
+            if (planarHalo) {
+                RenderType depthRenderType = Renders.HALO_DEPTH_MASK.apply(glowTexture);
+                VertexConsumer depthBuffer = bufferSource.getBuffer(depthRenderType);
+                this.reRender(
+                        model,
+                        poseStack,
+                        bufferSource,
+                        item,
+                        depthRenderType,
+                        depthBuffer,
+                        0,
+                        packedLight,
+                        OverlayTexture.NO_OVERLAY,
+                        1,
+                        1,
+                        1,
+                        1
+                );
+
+                // Ensure the mask reaches the depth buffer before drawing color.
+                // Flush only this RenderType so unrelated entity batches stay intact.
+                if (bufferSource instanceof MultiBufferSource.BufferSource immediateBufferSource) {
+                    immediateBufferSource.endBatch(depthRenderType);
+                }
+            }
+            RenderType glowRenderType = planarHalo
+                    ? Renders.HALO_GLOW_COLOR.apply(glowTexture)
+                    : Renders.MODELED_HALO_GLOW.apply(glowTexture);
+            VertexConsumer glowBuffer = bufferSource.getBuffer(glowRenderType);
+            // A zero-thickness cube contains two coincident faces. Culling keeps
+            // only the camera-facing one; two identical color submissions retain
+            // the original additive brightness without reintroducing z-fighting.
+            int colorPassCount = planarHalo ? 2 : 1;
+            for (int pass = 0; pass < colorPassCount; pass++) {
+                this.reRender(
+                        model,
+                        poseStack,
+                        bufferSource,
+                        item,
+                        glowRenderType,
+                        glowBuffer,
+                        0,
+                        packedLight,
+                        OverlayTexture.NO_OVERLAY,
+                        glowColor[0] * glowIntensity,
+                        glowColor[1] * glowIntensity,
+                        glowColor[2] * glowIntensity,
+                        1
+                );
+            }
         } finally {
             // 确保恢复之前的姿态状态
             poseStack.popPose();
         }
-        // 保存当前姿态状态
-        poseStack.pushPose();
+    }
+
+    private static boolean isSinglePlaneModel(BakedGeoModel model) {
+        if (model.topLevelBones().size() != 1) return false;
+
+        GeoBone bone = model.topLevelBones().get(0);
+        if (!bone.getChildBones().isEmpty() || bone.getCubes().size() != 1) return false;
+
+        GeoCube cube = bone.getCubes().get(0);
+        int flatAxes = 0;
+        if (Math.abs(cube.size().x) < 1.0E-6) flatAxes++;
+        if (Math.abs(cube.size().y) < 1.0E-6) flatAxes++;
+        if (Math.abs(cube.size().z) < 1.0E-6) flatAxes++;
+        return flatAxes == 1;
     }
 
     private ResourceLocation getGlowTextureResource(ItemStack stack, DecorationItem item) {

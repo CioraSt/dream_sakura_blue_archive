@@ -10,11 +10,16 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelManager;
 import com.mojang.math.Axis;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.Util;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * 光之剑的分层 OBJ 渲染器。
@@ -46,6 +51,15 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
     private static final ResourceLocation LEFT_MUZZLE = model("left_muzzle");
     private static final ResourceLocation LEFT_CORE = model("left_core");
 
+    private static final List<ResourceLocation> ADDITIONAL_MODELS = List.of(
+            RIGHT_STATIC, RIGHT_UPPER, RIGHT_UPPER_SMALL,
+            RIGHT_LOWER, RIGHT_LOWER_SMALL, RIGHT_UPPER_ROD_HEAD, RIGHT_LOWER_ROD_HEAD, RIGHT_GLOW,
+            RIGHT_MUZZLE, RIGHT_CORE,
+            LEFT_STATIC, LEFT_UPPER, LEFT_UPPER_SMALL,
+            LEFT_LOWER, LEFT_LOWER_SMALL, LEFT_UPPER_ROD_HEAD, LEFT_LOWER_ROD_HEAD, LEFT_GLOW,
+            LEFT_MUZZLE, LEFT_CORE
+    );
+
     private static final float ROD_HINGE_Y = 0.50F;
     private static final float ROD_HINGE_Z = 0.68F;
     private static final float MUZZLE_AXIS_Y = 0.4476265F;
@@ -55,6 +69,33 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
     private static final float ROTATION_RADIANS_PER_SECOND = FULL_ROTATION * 0.75F;
     private static final float SECOND_STAGE_ROTATION_MULTIPLIER = 2.0F;
     private static final float INERTIA_DURATION_SECONDS = 1.25F;
+
+    private static final float[][] MUZZLE_RING = {
+            {-0.066488F, 0.447626F}, {-0.053789F, 0.408546F},
+            {-0.020546F, 0.384394F}, {0.020546F, 0.384394F},
+            {0.053789F, 0.408546F}, {0.066488F, 0.447626F},
+            {0.053789F, 0.486707F}, {0.020546F, 0.510859F},
+            {-0.020546F, 0.510859F}, {-0.053789F, 0.486707F}
+    };
+    private static final float[][] MUZZLE_PATCHES = {
+            {0.475547F, 0.488417F, 0.05F, 0.75F},
+            {0.516213F, 0.533003F, 0.05F, 0.75F},
+            {0.563779F, 0.586500F, 0.25F, 0.95F}
+    };
+    private static final float[] DISPLAY_SIDES = {-0.118045F, 0.118045F};
+    private static final float[] LOWER_STRIP_SIDES = {-0.05675F, 0.05675F};
+    private static final float[][][] TAIL_QUADS = {
+            {{0.404840F,-0.481033F},{0.411300F,-0.482315F},{0.411300F,-0.494897F},{0.404833F,-0.494897F}},
+            {{0.405644F,-0.467577F},{0.412087F,-0.470143F},{0.411365F,-0.480465F},{0.404900F,-0.479182F}},
+            {{0.406823F,-0.453957F},{0.414752F,-0.459858F},{0.412399F,-0.468326F},{0.405785F,-0.465730F}},
+            {{0.411097F,-0.442869F},{0.420609F,-0.452032F},{0.415583F,-0.458245F},{0.407258F,-0.452177F}},
+            {{0.417024F,-0.431220F},{0.428172F,-0.445172F},{0.421887F,-0.450700F},{0.411876F,-0.441190F}},
+            {{0.423900F,-0.419417F},{0.436997F,-0.438446F},{0.429608F,-0.444004F},{0.417918F,-0.429598F}}
+    };
+    private static final int[] DOUBLE_SIDED_QUAD_ORDER = {0, 1, 2, 3, 3, 2, 1, 0};
+
+    private static volatile ModelSet rightModels;
+    private static volatile ModelSet leftModels;
 
     // 渲染器是客户端单例；这些值让松开右键后仍能继续渲染平滑回退，而不是瞬间回到 0。
     private static float animationCharge;
@@ -75,15 +116,13 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
                 Minecraft.getInstance().getEntityModels());
     }
 
-    public static ResourceLocation[] additionalModels() {
-        return new ResourceLocation[]{
-                RIGHT_STATIC, RIGHT_UPPER, RIGHT_UPPER_SMALL,
-                RIGHT_LOWER, RIGHT_LOWER_SMALL, RIGHT_UPPER_ROD_HEAD, RIGHT_LOWER_ROD_HEAD, RIGHT_GLOW,
-                RIGHT_MUZZLE, RIGHT_CORE,
-                LEFT_STATIC, LEFT_UPPER, LEFT_UPPER_SMALL,
-                LEFT_LOWER, LEFT_LOWER_SMALL, LEFT_UPPER_ROD_HEAD, LEFT_LOWER_ROD_HEAD, LEFT_GLOW,
-                LEFT_MUZZLE, LEFT_CORE
-        };
+    public static List<ResourceLocation> additionalModels() {
+        return ADDITIONAL_MODELS;
+    }
+
+    public static void cacheModels(Map<ResourceLocation, BakedModel> models) {
+        rightModels = ModelSet.from(models, false);
+        leftModels = ModelSet.from(models, true);
     }
 
     @Override
@@ -92,16 +131,17 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
         boolean leftHand = context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
                 || context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
 
-        BakedModel staticModel = getModel(leftHand ? LEFT_STATIC : RIGHT_STATIC);
-        BakedModel upperModel = getModel(leftHand ? LEFT_UPPER : RIGHT_UPPER);
-        BakedModel upperSmallModel = getModel(leftHand ? LEFT_UPPER_SMALL : RIGHT_UPPER_SMALL);
-        BakedModel lowerModel = getModel(leftHand ? LEFT_LOWER : RIGHT_LOWER);
-        BakedModel lowerSmallModel = getModel(leftHand ? LEFT_LOWER_SMALL : RIGHT_LOWER_SMALL);
-        BakedModel upperRodHeadModel = getModel(leftHand ? LEFT_UPPER_ROD_HEAD : RIGHT_UPPER_ROD_HEAD);
-        BakedModel lowerRodHeadModel = getModel(leftHand ? LEFT_LOWER_ROD_HEAD : RIGHT_LOWER_ROD_HEAD);
-        BakedModel glowModel = getModel(leftHand ? LEFT_GLOW : RIGHT_GLOW);
-        BakedModel muzzleModel = getModel(leftHand ? LEFT_MUZZLE : RIGHT_MUZZLE);
-        BakedModel coreModel = getModel(leftHand ? LEFT_CORE : RIGHT_CORE);
+        ModelSet modelSet = leftHand ? leftModels : rightModels;
+        if (modelSet == null) {
+            modelSet = ModelSet.from(Minecraft.getInstance().getModelManager(), leftHand);
+            if (leftHand) {
+                leftModels = modelSet;
+            } else {
+                rightModels = modelSet;
+            }
+        }
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        boolean foil = stack.hasFoil();
 
         AnimationState animation = updateAnimation();
         float charge = animation.charge();
@@ -111,43 +151,43 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
         // 前端成对的小盖板行程稍大，避免被大盖板遮住而看不出动作。
         float smallOpening = wave * 0.065F;
 
-        renderNormally(staticModel, stack, poseStack, buffers, packedLight, packedOverlay);
+        renderNormally(itemRenderer, modelSet.staticModel(), stack, poseStack, buffers, packedLight, packedOverlay, foil);
 
         poseStack.pushPose();
         poseStack.translate(0.0F, opening, 0.0F);
-        renderNormally(upperModel, stack, poseStack, buffers, packedLight, packedOverlay);
+        renderNormally(itemRenderer, modelSet.upper(), stack, poseStack, buffers, packedLight, packedOverlay, foil);
         // 小盖板继承大盖板的位移后，再进行自己的额外开合。
         poseStack.translate(0.0F, smallOpening, 0.0F);
-        renderNormally(upperSmallModel, stack, poseStack, buffers, packedLight, packedOverlay);
+        renderNormally(itemRenderer, modelSet.upperSmall(), stack, poseStack, buffers, packedLight, packedOverlay, foil);
         poseStack.pushPose();
         rotateAroundHinge(poseStack, wave * 0.22F);
-        renderNormally(upperRodHeadModel, stack, poseStack, buffers, packedLight, packedOverlay);
+        renderNormally(itemRenderer, modelSet.upperRodHead(), stack, poseStack, buffers, packedLight, packedOverlay, foil);
         poseStack.popPose();
         poseStack.popPose();
 
         poseStack.pushPose();
         poseStack.translate(0.0F, -opening, 0.0F);
-        renderNormally(lowerModel, stack, poseStack, buffers, packedLight, packedOverlay);
+        renderNormally(itemRenderer, modelSet.lower(), stack, poseStack, buffers, packedLight, packedOverlay, foil);
         // 下侧同样先继承大盖板的下移，再额外向下张开小盖板。
         poseStack.translate(0.0F, -smallOpening, 0.0F);
-        renderNormally(lowerSmallModel, stack, poseStack, buffers, packedLight, packedOverlay);
+        renderNormally(itemRenderer, modelSet.lowerSmall(), stack, poseStack, buffers, packedLight, packedOverlay, foil);
         poseStack.pushPose();
         rotateAroundHinge(poseStack, -wave * 0.22F);
-        renderNormally(lowerRodHeadModel, stack, poseStack, buffers, packedLight, packedOverlay);
+        renderNormally(itemRenderer, modelSet.lowerRodHead(), stack, poseStack, buffers, packedLight, packedOverlay, foil);
         poseStack.popPose();
         poseStack.popPose();
 
         // 发光部件先参与正常光照，确保白天和 GUI 中仍保留原贴图细节。
-        renderNormally(glowModel, stack, poseStack, buffers, packedLight, packedOverlay);
+        renderNormally(itemRenderer, modelSet.glow(), stack, poseStack, buffers, packedLight, packedOverlay, foil);
         // 炮口和中间圆柱体从 glow 中独立出来，蓄力时绕自身中心轴旋转。
         poseStack.pushPose();
         rotateAroundPartAxis(poseStack, MUZZLE_AXIS_Y, animation.rotationAngle());
-        renderNormally(muzzleModel, stack, poseStack, buffers, packedLight, packedOverlay);
+        renderNormally(itemRenderer, modelSet.muzzle(), stack, poseStack, buffers, packedLight, packedOverlay, foil);
         renderMuzzleSideGlow(poseStack, buffers, animation);
         poseStack.popPose();
         poseStack.pushPose();
         rotateAroundPartAxis(poseStack, CORE_AXIS_Y, -animation.rotationAngle());
-        renderNormally(coreModel, stack, poseStack, buffers, packedLight, packedOverlay);
+        renderNormally(itemRenderer, modelSet.core(), stack, poseStack, buffers, packedLight, packedOverlay, foil);
         poseStack.popPose();
         // 动态发光不再给整个 OBJ 染色，而只覆盖指定的灯条、尾弧和数字区域。
         renderEnergyDisplays(poseStack, buffers, leftHand, animation);
@@ -228,22 +268,11 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
         PoseStack.Pose pose = poseStack.last();
 
         // 由 OBJ UV 对应蓝色像素得到的炮口十边形侧壁。只绘制侧面，不覆盖炮口正面。
-        float[][] ring = {
-                {-0.066488F, 0.447626F}, {-0.053789F, 0.408546F},
-                {-0.020546F, 0.384394F}, {0.020546F, 0.384394F},
-                {0.053789F, 0.408546F}, {0.066488F, 0.447626F},
-                {0.053789F, 0.486707F}, {0.020546F, 0.510859F},
-                {-0.020546F, 0.510859F}, {-0.053789F, 0.486707F}
-        };
-        float[][] patches = {
-                // z1、z2、侧面局部起点、侧面局部终点。每面蓝色都是中央方片。
-                {0.475547F, 0.488417F, 0.05F, 0.75F},
-                {0.516213F, 0.533003F, 0.05F, 0.75F},
-                {0.563779F, 0.586500F, 0.25F, 0.95F}
-        };
-        renderMuzzleBands(pose, consumer, ring, patches, blueProgress, blueColor(animation));
+        renderMuzzleBands(pose, consumer, MUZZLE_RING, MUZZLE_PATCHES,
+                blueProgress, blueColor(animation));
         // 白色二段覆盖在已经点亮的蓝色侧壁上，不再关闭蓝光后重新开始。
-        renderMuzzleBands(pose, consumer, ring, patches, whiteProgress, whiteColor(animation));
+        renderMuzzleBands(pose, consumer, MUZZLE_RING, MUZZLE_PATCHES,
+                whiteProgress, whiteColor(animation));
     }
 
     private static void renderMuzzleBands(PoseStack.Pose pose, VertexConsumer consumer,
@@ -290,16 +319,16 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
         renderLowerStrips(pose, consumer, lowerWhite, white);
 
         // 每一套左右手模型都在自身两侧显示尾部弧线、进度和数字。
-        for (float side : new float[]{-0.118045F, 0.118045F}) {
+        GlowColor numberColor = animation.stage2() > 0.0F
+                ? stableWhiteColor(animation)
+                : stableBlueColor(animation);
+        for (float side : DISPLAY_SIDES) {
             // 发光层沿显示面的外法线略微抬起，避免与 OBJ 原贴图共面而闪烁。
             float displayX = side + Math.copySign(0.00020F, side);
             renderTailArc(pose, consumer, displayX, animation.stage1(), blue);
             // 二段白光继续覆盖晶体管右侧进度段，不替换已经点亮的蓝光。
             renderTailArc(pose, consumer, displayX, animation.stage2(), white);
-            renderNumber(pose, consumer, displayX, animation.number(), leftHand,
-                    animation.stage2() > 0.0F
-                            ? stableWhiteColor(animation)
-                            : stableBlueColor(animation));
+            renderNumber(pose, consumer, displayX, animation.number(), leftHand, numberColor);
         }
     }
 
@@ -325,7 +354,7 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
         // 由贴图蓝色像素反查 UV 后得到的原模型长条真实边界。
         float z1 = 0.126191F;
         float z2 = z1 + (0.336993F - z1) * progress;
-        for (float side : new float[]{-0.05675F, 0.05675F}) {
+        for (float side : LOWER_STRIP_SIDES) {
             quadX(pose, consumer, side, 0.468746F, 0.486305F, z1, z2,
                     color.r(), color.g(), color.b(), color.a());
         }
@@ -333,26 +362,20 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
 
     private static void renderTailArc(PoseStack.Pose pose, VertexConsumer consumer, float x,
                                       float progress, GlowColor color) {
+        if (progress <= 0.0F) return;
         // 009/021 原始几何每段由两个三角形组成。这里按共同对角线重组为真实四边形，
         // 避免 lightning 的 QUADS 拓扑丢弃上一版的退化三角形。
-        float[][][] quads = {
-                {{0.404840F,-0.481033F},{0.411300F,-0.482315F},{0.411300F,-0.494897F},{0.404833F,-0.494897F}},
-                {{0.405644F,-0.467577F},{0.412087F,-0.470143F},{0.411365F,-0.480465F},{0.404900F,-0.479182F}},
-                {{0.406823F,-0.453957F},{0.414752F,-0.459858F},{0.412399F,-0.468326F},{0.405785F,-0.465730F}},
-                {{0.411097F,-0.442869F},{0.420609F,-0.452032F},{0.415583F,-0.458245F},{0.407258F,-0.452177F}},
-                {{0.417024F,-0.431220F},{0.428172F,-0.445172F},{0.421887F,-0.450700F},{0.411876F,-0.441190F}},
-                {{0.423900F,-0.419417F},{0.436997F,-0.438446F},{0.429608F,-0.444004F},{0.417918F,-0.429598F}}
-        };
-        int litSegments = Math.min(quads.length, (int) Math.ceil(progress * quads.length));
+        int litSegments = Math.min(TAIL_QUADS.length,
+                (int) Math.ceil(progress * TAIL_QUADS.length));
         for (int index = 0; index < litSegments; index++) {
-            polygonQuadX(pose, consumer, x, quads[index], color);
+            polygonQuadX(pose, consumer, x, TAIL_QUADS[index], color);
         }
     }
 
     private static void polygonQuadX(PoseStack.Pose pose, VertexConsumer consumer, float x,
                                      float[][] quad, GlowColor color) {
         // 正反两面各提交一个完整四边形。
-        for (int index : new int[]{0, 1, 2, 3, 3, 2, 1, 0}) {
+        for (int index : DOUBLE_SIDED_QUAD_ORDER) {
             vertex(consumer, pose, x, quad[index][0], quad[index][1],
                     color.r(), color.g(), color.b(), color.a());
         }
@@ -392,10 +415,14 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
 
     private static void renderNumber(PoseStack.Pose pose, VertexConsumer consumer, float x,
                                      int value, boolean mirrored, GlowColor color) {
-        int[] digits = {value / 100, value / 10 % 10, value % 10};
         for (int index = 0; index < 3; index++) {
             float z = -0.5535F + index * 0.0178F;
-            int mask = DIGITS[digits[index]];
+            int digit = switch (index) {
+                case 0 -> value / 100;
+                case 1 -> value / 10 % 10;
+                default -> value % 10;
+            };
+            int mask = DIGITS[digit];
             segment(pose, consumer, x, mask, 0, 0.4280F, digitZ(z + 0.0018F, mirrored), 0.4303F, digitZ(z + 0.0132F, mirrored), color);
             segment(pose, consumer, x, mask, 1, 0.4170F, digitZ(z + 0.0115F, mirrored), 0.4285F, digitZ(z + 0.0138F, mirrored), color);
             segment(pose, consumer, x, mask, 2, 0.4055F, digitZ(z + 0.0115F, mirrored), 0.4165F, digitZ(z + 0.0138F, mirrored), color);
@@ -486,19 +513,51 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
         poseStack.translate(0.0F, -axisY, 0.0F);
     }
 
-    private static BakedModel getModel(ResourceLocation location) {
-        return Minecraft.getInstance().getModelManager().getModel(location);
-    }
-
-    private static void renderNormally(BakedModel model, ItemStack stack, PoseStack poseStack,
-                                       MultiBufferSource buffers, int packedLight, int packedOverlay) {
-        ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
+    private static void renderNormally(ItemRenderer renderer, BakedModel model, ItemStack stack,
+                                       PoseStack poseStack, MultiBufferSource buffers,
+                                       int packedLight, int packedOverlay, boolean foil) {
         for (BakedModel pass : model.getRenderPasses(stack, true)) {
             pass.getRenderTypes(stack, true).forEach(renderType -> {
                 VertexConsumer consumer = ItemRenderer.getFoilBufferDirect(
-                        buffers, renderType, true, stack.hasFoil());
+                        buffers, renderType, true, foil);
                 renderer.renderModelLists(pass, stack, packedLight, packedOverlay, poseStack, consumer);
             });
+        }
+    }
+
+    private record ModelSet(BakedModel staticModel, BakedModel upper, BakedModel upperSmall,
+                            BakedModel upperRodHead, BakedModel lower, BakedModel lowerSmall,
+                            BakedModel lowerRodHead, BakedModel glow, BakedModel muzzle,
+                            BakedModel core) {
+        private static ModelSet from(Map<ResourceLocation, BakedModel> models, boolean leftHand) {
+            return create(location -> {
+                BakedModel model = models.get(location);
+                if (model == null) {
+                    throw new IllegalStateException("Missing baked sword model: " + location);
+                }
+                return model;
+            }, leftHand);
+        }
+
+        private static ModelSet from(ModelManager modelManager, boolean leftHand) {
+            return create(modelManager::getModel, leftHand);
+        }
+
+        private static ModelSet create(Function<ResourceLocation, BakedModel> lookup,
+                                       boolean leftHand) {
+            return leftHand
+                    ? new ModelSet(
+                            lookup.apply(LEFT_STATIC), lookup.apply(LEFT_UPPER),
+                            lookup.apply(LEFT_UPPER_SMALL), lookup.apply(LEFT_UPPER_ROD_HEAD),
+                            lookup.apply(LEFT_LOWER), lookup.apply(LEFT_LOWER_SMALL),
+                            lookup.apply(LEFT_LOWER_ROD_HEAD), lookup.apply(LEFT_GLOW),
+                            lookup.apply(LEFT_MUZZLE), lookup.apply(LEFT_CORE))
+                    : new ModelSet(
+                            lookup.apply(RIGHT_STATIC), lookup.apply(RIGHT_UPPER),
+                            lookup.apply(RIGHT_UPPER_SMALL), lookup.apply(RIGHT_UPPER_ROD_HEAD),
+                            lookup.apply(RIGHT_LOWER), lookup.apply(RIGHT_LOWER_SMALL),
+                            lookup.apply(RIGHT_LOWER_ROD_HEAD), lookup.apply(RIGHT_GLOW),
+                            lookup.apply(RIGHT_MUZZLE), lookup.apply(RIGHT_CORE));
         }
     }
 

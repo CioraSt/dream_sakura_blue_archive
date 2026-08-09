@@ -37,4 +37,9 @@ public final class ClientModEvents {
             event.register(model);
         }
     }
+
+    @SubscribeEvent
+    public static void cacheBakedModels(ModelEvent.BakingCompleted event) {
+        SwordOfLightRenderer.cacheModels(event.getModels());
+    }
 }

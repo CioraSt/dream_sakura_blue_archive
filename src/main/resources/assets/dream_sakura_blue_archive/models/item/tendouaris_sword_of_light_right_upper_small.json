@@ -1,9 +1,22 @@
 {
   "loader": "forge:obj",
-  "model": "dream_sakura_blue_archive:models/obj/tendouaris_sword_of_light_right_upper_small.obj",
+  "model": "dream_sakura_blue_archive:models/obj/tendouaris_sword_of_light.obj",
   "flip_v": true,
-  "detectCullableFaces": false,
-  "diffuseLighting": true,
+  "automatic_culling": true,
+  "shade_quads": true,
+  "emissive_ambient": true,
+  "visibility": {
+    "static": false,
+    "upper": false,
+    "upper_small": true,
+    "upper_rod_head": false,
+    "lower": false,
+    "lower_small": false,
+    "lower_rod_head": false,
+    "glow": false,
+    "muzzle": false,
+    "core": false
+  },
   "textures": {
     "sword_of_light": "dream_sakura_blue_archive:item/tendouaris_sword_of_light",
     "particle": "dream_sakura_blue_archive:item/tendouaris_sword_of_light"

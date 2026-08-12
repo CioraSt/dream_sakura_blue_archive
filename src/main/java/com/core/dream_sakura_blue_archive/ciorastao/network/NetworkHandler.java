@@ -20,11 +20,18 @@ public final class NetworkHandler {
                 .decoder(C2SGachaDrawPacket::decode).consumerMainThread(C2SGachaDrawPacket::handle).add();
         CHANNEL.messageBuilder(S2CGachaResultPacket.class, id++).encoder(S2CGachaResultPacket::encode)
                 .decoder(S2CGachaResultPacket::decode).consumerMainThread(S2CGachaResultPacket::handle).add();
+        CHANNEL.messageBuilder(C2SHaloSkillPacket.class, id++).encoder(C2SHaloSkillPacket::encode)
+                .decoder(C2SHaloSkillPacket::decode).consumerMainThread(C2SHaloSkillPacket::handle).add();
+        CHANNEL.messageBuilder(S2CHaloSkillVisualPacket.class, id++).encoder(S2CHaloSkillVisualPacket::encode)
+                .decoder(S2CHaloSkillVisualPacket::decode).consumerMainThread(S2CHaloSkillVisualPacket::handle).add();
     }
 
     public static void sendToServer(Object packet) { CHANNEL.sendToServer(packet); }
     public static void sendToPlayer(Object packet, ServerPlayer player) {
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), packet);
+    }
+    public static void sendTrackingAndSelf(Object packet, net.minecraft.world.entity.Entity entity) {
+        CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), packet);
     }
 
     private NetworkHandler() {

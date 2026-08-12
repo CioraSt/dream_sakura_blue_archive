@@ -143,7 +143,7 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         boolean foil = stack.hasFoil();
 
-        AnimationState animation = updateAnimation();
+        AnimationState animation = updateAnimation(stack);
         float charge = animation.charge();
         float wave = charge * charge * (3.0F - 2.0F * charge);
         // 最大开合约为模型自身厚度的四分之一，手持和 GUI 中都能清晰看到。
@@ -193,9 +193,15 @@ public final class SwordOfLightRenderer extends BlockEntityWithoutLevelRenderer 
         renderEnergyDisplays(poseStack, buffers, leftHand, animation);
     }
 
-    private static AnimationState updateAnimation() {
+    private static AnimationState updateAnimation(ItemStack stack) {
         Minecraft minecraft = Minecraft.getInstance();
         long now = Util.getMillis();
+        if (stack.hasTag() && stack.getTag() != null && stack.getTag().contains("DBAForcedCharge", 5)) {
+            float forced = saturate(stack.getTag().getFloat("DBAForcedCharge"));
+            float forcedRotation = wrapRotation(now / 1000.0F * ROTATION_RADIANS_PER_SECOND);
+            return new AnimationState(forced, forcedRotation, forced, 0, forced,
+                    Math.round(520.0F * forced));
+        }
         if (lastAnimationMillis < 0L) {
             lastAnimationMillis = now;
         }

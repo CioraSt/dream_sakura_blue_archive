@@ -94,33 +94,4 @@ public class DeathHandler {
         }
     }
 
-    // 星野光环被动1吸血逻辑
-    @SubscribeEvent
-    public static void HoshinoHaloBEvent(LivingDeathEvent event) {
-        if (event.getSource().getEntity() instanceof Player player) {
-            if (OtherHelper.getCuriosItem(player, "halo", "dream_sakura_blue_archive:hoshino_halo")) {
-                float healAmount = player.getMaxHealth() * 0.05f;
-                player.heal(healAmount);
-            }
-        }
-    }
-
-    // 日奈光环被动死亡逻辑
-    @SubscribeEvent
-    public static void HinaHaloBEvent(LivingDeathEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            if (OtherHelper.getCuriosItem(player, "halo", "dream_sakura_blue_archive:hina_halo")) {
-                CompoundTag playerData = player.getPersistentData();
-                CompoundTag skillData = playerData.contains("SkillData") ? playerData.getCompound("SkillData") : new CompoundTag();
-                if (skillData.contains("HinaHaloData")) {
-                    CompoundTag hinaHaloData = skillData.getCompound("HinaHaloData");
-                    // 移除被动2效果
-                    hinaHaloData.remove("Passive2Active");
-                    // 移除被动3效果
-                    hinaHaloData.remove("Passive3Active");
-                }
-                ;
-            }
-        }
-    }
 }

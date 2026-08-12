@@ -3,6 +3,7 @@ package com.core.dream_sakura_blue_archive.ciorastao;
 import com.core.dream_sakura_blue_archive.ciorastao.effect.RegistryEffect;
 import com.core.dream_sakura_blue_archive.ciorastao.entity.RegistryEntity;
 import com.core.dream_sakura_blue_archive.ciorastao.items.RegistryItem;
+import com.core.dream_sakura_blue_archive.ciorastao.halo.HaloCatalog;
 import com.core.dream_sakura_blue_archive.ciorastao.menu.RegistryMenu;
 import com.core.dream_sakura_blue_archive.ciorastao.network.NetworkHandler;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloSchoolHelper;
@@ -38,33 +39,14 @@ public class dream_sakura_blue_archive {
             .displayItems((parameters, output) -> {
                 output.accept(RegistryItem.PYROXENE.get());
                 output.accept(RegistryItem.ARONA_SPAWN_EGG.get());
-                acceptHalo(output, RegistryItem.SHIROKO_HALO, "shiroko_cycling_halo", "shiroko_swimsuit_halo");
-                acceptHalo(output, RegistryItem.HOSHINO_HALO, "hoshino_swimsuit_halo");
-                acceptHalo(output, RegistryItem.SERLKA_HALO);
-                acceptHalo(output, RegistryItem.NONOMI_HALO);
-                acceptHalo(output, RegistryItem.AYANE_HALO, "ayane_swimsuit_halo");
-                acceptHalo(output, RegistryItem.YUME_HALO);
-                acceptHalo(output, RegistryItem.HINA_HALO, "hina_dress_halo", "hina_swimsuit_halo");
-                acceptHalo(output, RegistryItem.KAYOKO_HALO, "kayoko_newyear_halo");
-                acceptHalo(output, RegistryItem.TENDOUARIS_HALO, "tendouaris_battle_halo", "tendouaris_maid_halo");
+                for (HaloCatalog.Entry entry : HaloCatalog.entries()) {
+                    RegistryObject<net.minecraft.world.item.Item> halo = RegistryItem.halo(entry.id());
+                    acceptHalo(output, halo, HaloVariantHelper.variantsFor(entry.id()).toArray(String[]::new));
+                }
                 output.accept(RegistryItem.TENDOUARIS_SWORD_OF_LIGHT.get());
-                acceptHalo(output, RegistryItem.YUZU_HALO, "yuzu_battle_halo", "yuzu_maid_halo");
-                acceptHalo(output, RegistryItem.MOMOI_HALO, "momoi_maid_halo");
-                acceptHalo(output, RegistryItem.MIDORI_HALO, "midori_maid_halo");
-                acceptHalo(output, RegistryItem.KAIYI_HALO);
                 acceptHalo(output, RegistryItem.KLUONUOYA_HALO);
-                acceptHalo(output, RegistryItem.SHIRASUAZUSA_HALO, "shirasuazusa_swimsuit_halo");
-                acceptHalo(output, RegistryItem.MARI_HALO, "mari_idol_halo", "mari_gym_halo");
-                acceptHalo(output, RegistryItem.SEIA_HALO, "seia_swimsuit_halo");
-                output.accept(RegistryItem.MIKA_HALO.get());
-                acceptHalo(output, RegistryItem.NATSU_HALO, "natsu_band_halo");
-                acceptHalo(output, RegistryItem.SHUN_HALO);
                 acceptHalo(output, RegistryItem.KARENA_HALO);
                 acceptHalo(output, RegistryItem.SAKULUNA_HALO);
-                acceptHalo(output, RegistryItem.JUGUANG_HALO);
-                acceptHalo(output, RegistryItem.JUWANG_HALO);
-                acceptHalo(output, RegistryItem.KUROKO_HALO);
-                acceptHalo(output, RegistryItem.REN_HALO);
                 output.accept(RegistryItem.PRIMARY_EXP.get());
                 output.accept(RegistryItem.INTERMEDIATE_EXP.get());
                 output.accept(RegistryItem.SENIOR_EXP.get());
@@ -97,6 +79,8 @@ public class dream_sakura_blue_archive {
     }
 
     private void onClientSetup(net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent event) {
-        HaloSchoolHelper.registerCategories();
+        event.enqueueWork(() -> {
+            HaloSchoolHelper.registerCategories();
+        });
     }
 }

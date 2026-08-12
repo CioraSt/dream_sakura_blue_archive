@@ -118,6 +118,16 @@ public class ClientSetup {
                 () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
         );
 
+        // Catalog HALOs are registered dynamically, so they must also be
+        // connected to Curios' client renderer registry dynamically. Without
+        // this, the items can occupy the halo slot but render nothing.
+        RegistryItem.CATALOG_HALOS.values().forEach(halo ->
+                CuriosRendererRegistry.register(
+                        halo.get(),
+                        () -> new GeckoCurioRendererHoxie<>(decorationRenderer)
+                )
+        );
+
         CuriosRendererRegistry.register(
                 RegistryItem.MIKA_HALO.get(),
                 MikaObjCurioRenderer::new

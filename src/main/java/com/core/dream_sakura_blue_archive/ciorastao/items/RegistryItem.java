@@ -2,6 +2,8 @@ package com.core.dream_sakura_blue_archive.ciorastao.items;
 
 import com.core.dream_sakura_blue_archive.ciorastao.dream_sakura_blue_archive;
 import com.core.dream_sakura_blue_archive.ciorastao.entity.RegistryEntity;
+import com.core.dream_sakura_blue_archive.ciorastao.halo.HaloCatalog;
+import com.core.dream_sakura_blue_archive.ciorastao.halo.HaloRuntime;
 import com.core.dream_sakura_blue_archive.ciorastao.util.RegistryActiveSkill;
 import com.core.dream_sakura_blue_archive.ciorastao.util.RegistryPassiveSkill;
 import net.minecraft.world.item.Item;
@@ -10,6 +12,9 @@ import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class RegistryItem {
     // 创建注册器
@@ -36,6 +41,13 @@ public class RegistryItem {
     public static final RegistryObject<Item> CATEGORY_SHANHAIJING = categoryIcon("category_shanhaijing");
     public static final RegistryObject<Item> CATEGORY_HIGHLANDER = categoryIcon("category_highlander");
     public static final RegistryObject<Item> CATEGORY_FEDERAL = categoryIcon("category_federal");
+    public static final RegistryObject<Item> CATEGORY_ARIUS = categoryIcon("category_arius");
+    public static final RegistryObject<Item> CATEGORY_VALKYRIE = categoryIcon("category_valkyrie");
+    public static final RegistryObject<Item> CATEGORY_HYAKKIYAKO = categoryIcon("category_hyakkiyako");
+    public static final RegistryObject<Item> CATEGORY_REDWINTER = categoryIcon("category_redwinter");
+    public static final RegistryObject<Item> CATEGORY_WILDHUNT = categoryIcon("category_wildhunt");
+    public static final RegistryObject<Item> CATEGORY_SRT = categoryIcon("category_srt");
+    public static final RegistryObject<Item> CATEGORY_KRONOS = categoryIcon("category_kronos");
 
     private static RegistryObject<Item> categoryIcon(String id) {
         return ITEMS.register(id, () -> new Item(new Item.Properties()));
@@ -104,11 +116,7 @@ public class RegistryItem {
                             new int[]{673}, new int[]{1024}, 132, 132, 0.0F, 0.0F, 38, 0.7F, 0.7F, 3, 3000L, true, false
                     ))
                     .withCurioEquipCallback(
-                            (slotContext, stack) -> {
-                                RegistryPassiveSkill.Hoshino_Halo_Skill_0(slotContext, stack);
-                                RegistryPassiveSkill.Hoshino_Halo_Skill_1(slotContext, stack);
-                                RegistryPassiveSkill.Hoshino_Halo_Skill_2(slotContext, stack);
-                            }
+                            HaloRuntime::tickEquipped
                     ).build()
     );
     private static final float[] ALS_GLOW = {0.45f, 0.78f, 0.95f}; // 爱丽丝蓝偏蓝
@@ -132,11 +140,7 @@ public class RegistryItem {
                     ))
                     .withSkillBinding(RegistryActiveSkill.TENDOUARIS_HALO_Skill.get())//主动技能
                     .withCurioEquipCallback(//被动技能
-                            (slotContext, stack) -> {
-                                RegistryPassiveSkill.TENDOUARIS_Halo_Skill_1(slotContext, stack);
-                                RegistryPassiveSkill.TENDOUARIS_Halo_Skill_2(slotContext, stack);
-                                RegistryPassiveSkill.TENDOUARIS_Halo_Skill_3(slotContext, stack);
-                            }
+                            HaloRuntime::tickEquipped
                     )
                     .build()
     );
@@ -314,12 +318,7 @@ public class RegistryItem {
                             new int[]{1400}, new int[]{927}, 175, 175, 0.0F, 0.0F, 52, 0.8F, 0.6F, 4, 2500L, true, false
                     ))
                     .withCurioEquipCallback(
-                            (slotContext, stack) -> {
-                                RegistryPassiveSkill.Hina_Halo_Skill_0(slotContext, stack);
-                                RegistryPassiveSkill.Hina_Halo_Skill_2(slotContext, stack);
-                                RegistryPassiveSkill.Hina_Halo_Skill_3(slotContext, stack);
-
-                            }
+                            HaloRuntime::tickEquipped
                     ).build()
     );
     private static final float[] WHITE_GLOW = {1.000f, 1.000f, 1.000f}; // 白色
@@ -409,13 +408,8 @@ public class RegistryItem {
                             0.0F, -20.0F, false, new String[]{"dream_sakura_blue_archive:textures/screens/sakuluna.png"},
                             new int[]{3672}, new int[]{1964}, 135, 135, 0.0F, 0.0F, 42, 0.85F, 2.2F, 3, 1500L, true, false
                     ))
-                    //.withSkillBinding(RegistryActiveSkill.SAKULUNA_Halo_Skill.get())
-                    //.withCurioEquipCallback(
-                    //        (slotContext, stack) -> {
-                    // 技能绑定逻辑
-                    //            RegistryActiveSkill.SAKULUNA_Halo_Skill.get().onEquip(slotContext, stack);
-                    //        }
-                    //)
+                    .withSkillBinding(RegistryActiveSkill.SAKULUNA_Halo_Skill.get())
+                    .withCurioEquipCallback(HaloRuntime::tickEquipped)
                     .build()
     );
     //橘光光环注册 JUGUANG_HALO
@@ -671,5 +665,84 @@ public class RegistryItem {
             "mika_halo",
             () -> new MikaObjHaloItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC))
     );
+
+    /** Wiki catalog entries without a hand-authored gameplay item. */
+    public static final Map<String, RegistryObject<Item>> CATALOG_HALOS = registerCatalogHalos();
+
+    private static Map<String, RegistryObject<Item>> registerCatalogHalos() {
+        Map<String, RegistryObject<Item>> result = new LinkedHashMap<>();
+        for (HaloCatalog.Entry entry : HaloCatalog.entries()) {
+            if (entry.existing()) continue;
+            result.put(entry.id(), ITEMS.register(entry.id(), () -> new DecorationItem.Builder(
+                    entry.id(), new Item.Properties().stacksTo(1).rarity(Rarity.EPIC))
+                    .withHaloLevelSystem()
+                    .withGlowColor(WHITE_GLOW)
+                    .withGlowIntensity(1.0F)
+                    .withTooltipTextureConfig(catalogTooltip(entry))
+                    .build()));
+        }
+        return Map.copyOf(result);
+    }
+
+    private static com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig catalogTooltip(HaloCatalog.Entry entry) {
+        return new com.core.dream_sakura.api.tooltip.DreamSakuraTooltipAPI.DreamSakuraTextureConfig(
+                192, 192, 2.5F, 3000.0F,
+                entry.backgroundStart(), entry.backgroundEnd(), entry.borderStart(), entry.borderEnd(),
+                0.0F, -20.0F, false,
+                new String[]{dream_sakura_blue_archive.MODID + ":textures/screens/" + entry.portraitId() + ".png"},
+                new int[]{entry.portraitWidth()}, new int[]{entry.portraitHeight()},
+                132, 132, 0.0F, 0.0F, 40, 0.8F, 1.2F, 3, 2000L, true, false
+        );
+    }
+
+    public static RegistryObject<Item> categoryIconFor(String school) {
+        return switch (school) {
+            case "abydos" -> CATEGORY_ABYDOS;
+            case "arius" -> CATEGORY_ARIUS;
+            case "valkyrie" -> CATEGORY_VALKYRIE;
+            case "gehenna" -> CATEGORY_GEHENNA;
+            case "shanhaijing" -> CATEGORY_SHANHAIJING;
+            case "trinity" -> CATEGORY_TRINITY;
+            case "highlander" -> CATEGORY_HIGHLANDER;
+            case "hyakkiyako" -> CATEGORY_HYAKKIYAKO;
+            case "millennium" -> CATEGORY_MILLENNIUM;
+            case "redwinter" -> CATEGORY_REDWINTER;
+            case "wildhunt" -> CATEGORY_WILDHUNT;
+            case "srt" -> CATEGORY_SRT;
+            case "kronos" -> CATEGORY_KRONOS;
+            default -> CATEGORY_FEDERAL;
+        };
+    }
+
+    public static RegistryObject<Item> halo(String itemId) {
+        RegistryObject<Item> generated = CATALOG_HALOS.get(itemId);
+        if (generated != null) return generated;
+        return switch (itemId) {
+            case "ayaneko_halo" -> AYANE_HALO;
+            case "shiroko_halo" -> SHIROKO_HALO;
+            case "serlka_halo" -> SERLKA_HALO;
+            case "nonomi_halo" -> NONOMI_HALO;
+            case "hoshino_halo" -> HOSHINO_HALO;
+            case "kuroko_halo" -> KUROKO_HALO;
+            case "yume_halo" -> YUME_HALO;
+            case "hina_halo" -> HINA_HALO;
+            case "kayoko_halo" -> KAYOKO_HALO;
+            case "shun_halo" -> SHUN_HALO;
+            case "seia_halo" -> SEIA_HALO;
+            case "mika_halo" -> MIKA_HALO;
+            case "mari_halo" -> MARI_HALO;
+            case "shirasuazusa_halo" -> SHIRASUAZUSA_HALO;
+            case "natsu_halo" -> NATSU_HALO;
+            case "tendouaris_halo" -> TENDOUARIS_HALO;
+            case "midori_halo" -> MIDORI_HALO;
+            case "momoi_halo" -> MOMOI_HALO;
+            case "yuzu_halo" -> YUZU_HALO;
+            case "juguang_halo" -> JUGUANG_HALO;
+            case "juwang_halo" -> JUWANG_HALO;
+            case "kaiyi_halo" -> KAIYI_HALO;
+            case "ren_halo" -> REN_HALO;
+            default -> throw new IllegalArgumentException("Unknown HALO catalog id: " + itemId);
+        };
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.core.dream_sakura_blue_archive.ciorastao.items.client;
 
 import com.core.dream_sakura_blue_archive.ciorastao.dream_sakura_blue_archive;
+import com.core.dream_sakura_blue_archive.ciorastao.halo.HaloCatalog;
 import com.core.dream_sakura_blue_archive.ciorastao.items.DecorationItem;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloVariantHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -22,6 +23,7 @@ import javax.annotation.Nullable;
  * 装饰物品的渲染器类，继承自GeoItemRenderer，专门用于处理装饰物品的渲染逻辑
  */
 public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
+    private boolean renderingPlanar;
     /**
      * 构造函数，初始化装饰渲染器
      */
@@ -54,6 +56,10 @@ public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
             return;
         }
 
+        boolean previousPlanar = renderingPlanar;
+        BakedGeoModel currentModel = this.getGeoModel().getBakedModel(this.getGeoModel().getModelResource(item, this));
+        renderingPlanar = isSinglePlaneModel(currentModel);
+
         // 保存当前状态
         poseStack.pushPose();
 
@@ -79,6 +85,7 @@ public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
         } finally {
             // 确保无论如何都会恢复poseStack的状态
             poseStack.popPose();
+            renderingPlanar = previousPlanar;
         }
     }
 
@@ -143,14 +150,19 @@ public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
                     immediateBufferSource.endBatch(depthRenderType);
                 }
             }
+            boolean generatedCatalogHalo = HaloCatalog.isGenerated(
+                    HaloVariantHelper.baseItemId(item.getEffectiveItemId(stack))
+            );
             RenderType glowRenderType = planarHalo
-                    ? Renders.HALO_GLOW_COLOR.apply(glowTexture)
+                    ? (generatedCatalogHalo
+                        ? Renders.CATALOG_HALO_GLOW_COLOR.apply(glowTexture)
+                        : Renders.HALO_GLOW_COLOR.apply(glowTexture))
                     : Renders.MODELED_HALO_GLOW.apply(glowTexture);
             VertexConsumer glowBuffer = bufferSource.getBuffer(glowRenderType);
             // A zero-thickness cube contains two coincident faces. Culling keeps
             // only the camera-facing one; two identical color submissions retain
             // the original additive brightness without reintroducing z-fighting.
-            int colorPassCount = planarHalo ? 2 : 1;
+            int colorPassCount = planarHalo && !generatedCatalogHalo ? 2 : 1;
             for (int pass = 0; pass < colorPassCount; pass++) {
                 this.reRender(
                         model,
@@ -206,6 +218,8 @@ public class DecorationRenderer extends GeoItemRenderer<DecorationItem> {
     @Override
     public RenderType getRenderType(DecorationItem animatable, ResourceLocation texture,
                                     @Nullable MultiBufferSource bufferSource, float partialTick) {
-        return RenderType.entityTranslucent(texture);
+        // 零厚度 cube 会生成两个完全共面的正反面。基础贴图也必须开启背面剔除，
+        // 否则即使发光层已拆分，基础层本身仍会发生 z-fighting。
+        return renderingPlanar ? RenderType.entityTranslucentCull(texture) : RenderType.entityTranslucent(texture);
     }
 }

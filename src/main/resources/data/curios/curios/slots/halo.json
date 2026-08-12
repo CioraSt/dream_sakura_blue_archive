@@ -1,0 +1,10 @@
+{
+  "order": 10,
+  "size": 1,
+  "icon": "curios:slot/empty_curio_slot",
+  "add_cosmetic": false,
+  "render_toggle": true,
+  "validators": [
+    "curios:tag"
+  ]
+}

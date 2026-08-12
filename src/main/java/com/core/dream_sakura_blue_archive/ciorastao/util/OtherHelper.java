@@ -43,10 +43,12 @@ public class OtherHelper {
     }
 
     /**
-     * 将光环等级(1~100)映射到TXT设定的10档被动技能等级(1~10)
-     * 映射规则：1-10→1, 11-20→2, ..., 91-100→10
+     * 将光环等级映射到 TXT 设定的 10 档被动技能等级。
+     * 当前光环系统满级为 90，满级直接对应 MAX；此前 1-89 仍沿用每 10 级一档。
      */
     public static int getPassiveSkillLevel(int haloLevel) {
+        // 当前物品系统的满级是 90；确保满级能够实际取得设定表中的 MAX 档。
+        if (haloLevel >= 90) return 10;
         int skillLevel = (haloLevel - 1) / 10 + 1;
         return Math.min(skillLevel, 10);
     }

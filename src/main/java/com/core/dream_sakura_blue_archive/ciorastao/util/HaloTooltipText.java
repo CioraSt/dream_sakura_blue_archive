@@ -4,6 +4,7 @@ import net.minecraft.locale.Language;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import com.core.dream_sakura_blue_archive.ciorastao.halo.HaloCatalog;
 
 import java.util.List;
 
@@ -15,8 +16,16 @@ public final class HaloTooltipText {
     }
 
     public static void addCharacterTooltip(String itemId, List<Component> tooltip) {
+        HaloCatalog.Entry entry = HaloCatalog.get(HaloVariantHelper.baseItemId(itemId));
+        int firstAddedLine = tooltip.size();
         addTranslated(tooltip, PREFIX + itemId + ".base");
         addSequentialLines(tooltip, PREFIX + itemId + ".describe.line");
+        if (entry != null && !entry.existing()) {
+            Style style = Style.EMPTY.withColor(entry.primaryColor());
+            for (int index = firstAddedLine; index < tooltip.size(); index++) {
+                tooltip.set(index, tooltip.get(index).copy().withStyle(style));
+            }
+        }
     }
 
     public static void addSkillTooltip(String itemId, List<Component> tooltip) {
@@ -42,9 +51,13 @@ public final class HaloTooltipText {
     }
 
     private static Style getItemNameStyle(String itemId) {
+        HaloCatalog.Entry entry = HaloCatalog.get(HaloVariantHelper.baseItemId(itemId));
+        if (entry != null && !entry.existing()) {
+            return Style.EMPTY.withColor(entry.primaryColor());
+        }
         String key = "item.dream_sakura_blue_archive." + itemId;
         String text = Language.getInstance().getOrDefault(key);
-        int marker = text.indexOf('§');
+        int marker = text.indexOf('\u00A7');
         if (marker >= 0 && marker + 1 < text.length()) {
             ChatFormatting formatting = ChatFormatting.getByCode(text.charAt(marker + 1));
             if (formatting != null && formatting.isColor()) {

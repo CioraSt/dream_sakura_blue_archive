@@ -69,6 +69,14 @@ public final class HaloVariantHelper {
         return BASE_BY_VARIANT.keySet();
     }
 
+    public static java.util.List<String> variantsFor(String baseItemId) {
+        return BASE_BY_VARIANT.entrySet().stream()
+                .filter(entry -> baseItemId.equals(entry.getValue()))
+                .map(Map.Entry::getKey)
+                .sorted()
+                .toList();
+    }
+
     public static void registerVariantTooltips(String baseItemId, DreamSakuraTooltipAPI.DreamSakuraTextureConfig baseConfig) {
         for (Map.Entry<String, String> entry : BASE_BY_VARIANT.entrySet()) {
             if (!baseItemId.equals(entry.getValue())) {

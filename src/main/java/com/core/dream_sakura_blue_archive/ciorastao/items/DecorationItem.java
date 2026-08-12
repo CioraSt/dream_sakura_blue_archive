@@ -10,6 +10,7 @@ import com.core.dream_sakura.skill.SkillBinding;
 import com.core.dream_sakura.skill.SkillRegistry;
 import com.core.dream_sakura_blue_archive.ciorastao.items.client.DecorationRenderer;
 import com.core.dream_sakura_blue_archive.ciorastao.items.client.IGlowingItem;
+import com.core.dream_sakura_blue_archive.ciorastao.halo.HaloCatalog;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloLevelManager;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloTooltipText;
 import com.core.dream_sakura_blue_archive.ciorastao.util.HaloVariantHelper;
@@ -284,6 +285,10 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
     @Override
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
+        HaloCatalog.Entry catalogEntry = HaloCatalog.get(HaloVariantHelper.baseItemId(getEffectiveItemId(stack)));
+        boolean generatedCatalogHalo = catalogEntry != null && !catalogEntry.existing();
+        int levelColor = generatedCatalogHalo ? catalogEntry.primaryColor() : 0xFF00FF;
+        int experienceColor = generatedCatalogHalo ? catalogEntry.secondaryColor() : 0xADD8E6;
 
         // 添加自定义工具提示文本
         if (this.tooltipTranslationKey != null && !this.tooltipTranslationKey.isEmpty()) {
@@ -300,14 +305,14 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
                     Component.translatable(
                             "tooltip.dream_sakura_blue_archive.level",
                             itemLevel
-                    ).withStyle(Style.EMPTY.withColor(0xFF00FF))
+                    ).withStyle(Style.EMPTY.withColor(levelColor))
             );
 
             if (itemLevel >= 90 && itemXp >= itemMaxXp) {
                 tooltip.add(
                         Component.translatable(
                                 "tooltip.dream_sakura_blue_archive.xp.max"
-                        ).withStyle(Style.EMPTY.withColor(0xADD8E6))
+                        ).withStyle(Style.EMPTY.withColor(experienceColor))
                 );
             } else {
                 tooltip.add(
@@ -315,7 +320,7 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
                                 "tooltip.dream_sakura_blue_archive.xp",
                                 itemXp,
                                 itemMaxXp
-                        ).withStyle(Style.EMPTY.withColor(0xADD8E6))
+                        ).withStyle(Style.EMPTY.withColor(experienceColor))
                 );
             }
 
@@ -408,7 +413,13 @@ public class DecorationItem extends Item implements ICurioItem, GeoItem, IDamage
 
     @Override
     public Component getName(ItemStack stack) {
-        return Component.translatable("item.dream_sakura_blue_archive." + getEffectiveItemId(stack));
+        String effectiveId = getEffectiveItemId(stack);
+        Component name = Component.translatable("item.dream_sakura_blue_archive." + effectiveId);
+        HaloCatalog.Entry catalogEntry = HaloCatalog.get(HaloVariantHelper.baseItemId(effectiveId));
+        if (catalogEntry != null && !catalogEntry.existing()) {
+            return name.copy().withStyle(Style.EMPTY.withColor(catalogEntry.primaryColor()));
+        }
+        return name;
     }
     //#endregion
 
